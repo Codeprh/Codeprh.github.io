@@ -1,0 +1,735 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>Java并发编程实战②-并发工具类 | Noah</title><meta name="description" content="Java并发编程实战是学习《并发编程实战》和极客时间《Java并发编程》的记录。"><meta name="keywords" content="Java并发"><meta name="author" content="Noah Pan"><meta name="copyright" content="Noah Pan"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Java并发编程实战②-并发工具类"><meta name="twitter:description" content="Java并发编程实战是学习《并发编程实战》和极客时间《Java并发编程》的记录。"><meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Java并发编程实战②-并发工具类"><meta property="og:url" content="http://yoursite.com/2019/09/22/2019-09-22-java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E2%91%A1-%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB/"><meta property="og:site_name" content="Noah"><meta property="og:description" content="Java并发编程实战是学习《并发编程实战》和极客时间《Java并发编程》的记录。"><meta property="og:image" content="https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="canonical" href="http://yoursite.com/2019/09/22/2019-09-22-java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E2%91%A1-%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB/"><link rel="prev" title="Java并发编程实战①-并发理论基础" href="http://yoursite.com/2019/09/22/2019-09-22-java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E2%91%A0-%E5%B9%B6%E5%8F%91%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/"><link rel="next" title="Spring与boot源码④-MVC核心" href="http://yoursite.com/2019/09/09/2019-09-09-spring%E4%B8%8Eboot%E6%BA%90%E7%A0%81%E2%91%A3-mvc%E6%A0%B8%E5%BF%83/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'false',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  copyright: undefined,
+  copy_copyright_js: false,
+  ClickShowText: undefined,
+  medium_zoom: 'true',
+  Snackbar: undefined
+  
+}</script></head><body><div id="header"> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">Noah</a></span><i class="fa fa-bars fa-fw toggle-menu pull_right close" aria-hidden="true"></i><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 收藏夹</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 更多</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 电影</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"></span></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="lazyload avatar_img" src="https://tva1.sinaimg.cn/large/006y8mN6gy1g95i8yiaddj30sg0sgdgm.jpg" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item is_center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">28</div></a></div></div><div class="mobile_data_item is_center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">15</div></a></div></div><div class="mobile_data_item is_center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">15</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 收藏夹</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 更多</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 电影</span></a></li></ul></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#Java并发编程实战-并发工具类"><span class="toc_mobile_items-text">Java并发编程实战-并发工具类</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#并发工具类-总览"><span class="toc_mobile_items-text">并发工具类-总览</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Lock和Condition（上）：隐藏在并发包中的管程"><span class="toc_mobile_items-text">Lock和Condition（上）：隐藏在并发包中的管程</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Lock再造管程的理由：Synchronized升级版"><span class="toc_mobile_items-text">Lock再造管程的理由：Synchronized升级版</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#什么是可重入锁（ReentrantLock）"><span class="toc_mobile_items-text">什么是可重入锁（ReentrantLock）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#公平锁和非公平锁"><span class="toc_mobile_items-text">公平锁和非公平锁</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#用锁的最佳实践"><span class="toc_mobile_items-text">用锁的最佳实践</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Lock和Condition（下）：Dubbo如何用管程实现异步转同步？"><span class="toc_mobile_items-text">Lock和Condition（下）：Dubbo如何用管程实现异步转同步？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#同步与异步"><span class="toc_mobile_items-text">同步与异步</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Dubbo异步转同步"><span class="toc_mobile_items-text">Dubbo异步转同步</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Semaphore：如何快速实现一个限流器？"><span class="toc_mobile_items-text">Semaphore：如何快速实现一个限流器？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Semaphore信号量模型"><span class="toc_mobile_items-text">Semaphore信号量模型</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#快速实现一个限流器（Semaphore）"><span class="toc_mobile_items-text">快速实现一个限流器（Semaphore）</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#ReadWriteLock：如何快速一个完备的缓存？"><span class="toc_mobile_items-text">ReadWriteLock：如何快速一个完备的缓存？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#什么是读写锁（ReadWriteLock）"><span class="toc_mobile_items-text">什么是读写锁（ReadWriteLock）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#快速实现一个缓存"><span class="toc_mobile_items-text">快速实现一个缓存</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#读写锁总结"><span class="toc_mobile_items-text">读写锁总结</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#StampedLock：有没有比读写锁更快的锁？"><span class="toc_mobile_items-text">StampedLock：有没有比读写锁更快的锁？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ReentrantReadWriteLock和StampedLock的比较"><span class="toc_mobile_items-text">ReentrantReadWriteLock和StampedLock的比较</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#StampedLock注意事项"><span class="toc_mobile_items-text">StampedLock注意事项</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CountDownLatch和CyclicBarrier：如何让多线程步调一致？"><span class="toc_mobile_items-text">CountDownLatch和CyclicBarrier：如何让多线程步调一致？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#介绍CountDownLactch和CyclicBarrier"><span class="toc_mobile_items-text">介绍CountDownLactch和CyclicBarrier</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#并发容器：都有哪些”坑”需要我们填？"><span class="toc_mobile_items-text">并发容器：都有哪些”坑”需要我们填？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#同步容器"><span class="toc_mobile_items-text">同步容器</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#并发容器"><span class="toc_mobile_items-text">并发容器</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#原子类：无锁工具类的典范"><span class="toc_mobile_items-text">原子类：无锁工具类的典范</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#原子类本质（CAS）"><span class="toc_mobile_items-text">原子类本质（CAS）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#JDK原子类概览"><span class="toc_mobile_items-text">JDK原子类概览</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#总结"><span class="toc_mobile_items-text">总结</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Executor与线程池：如何创建正确的线程池？"><span class="toc_mobile_items-text">Executor与线程池：如何创建正确的线程池？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#线程池也是一种生产者——消费者模式"><span class="toc_mobile_items-text">线程池也是一种生产者——消费者模式</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#java-util-concurrent-CompletionStage接口理解"><span class="toc_mobile_items-text">java.util.concurrent.CompletionStage接口理解</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#利用CompletionService实现Dubbo中的Forking-Cluster"><span class="toc_mobile_items-text">利用CompletionService实现Dubbo中的Forking Cluster</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#总结-1"><span class="toc_mobile_items-text">总结</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Fork-Join：单机版的MapReduce"><span class="toc_mobile_items-text">Fork/Join：单机版的MapReduce</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#分治任务模型"><span class="toc_mobile_items-text">分治任务模型</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Fork-Join的使用"><span class="toc_mobile_items-text">Fork/Join的使用</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#总结-2"><span class="toc_mobile_items-text">总结</span></a></li></ol></li></ol></li></ol></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java并发编程实战-并发工具类"><span class="toc-text">Java并发编程实战-并发工具类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#并发工具类-总览"><span class="toc-text">并发工具类-总览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lock和Condition（上）：隐藏在并发包中的管程"><span class="toc-text">Lock和Condition（上）：隐藏在并发包中的管程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lock再造管程的理由：Synchronized升级版"><span class="toc-text">Lock再造管程的理由：Synchronized升级版</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是可重入锁（ReentrantLock）"><span class="toc-text">什么是可重入锁（ReentrantLock）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#公平锁和非公平锁"><span class="toc-text">公平锁和非公平锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用锁的最佳实践"><span class="toc-text">用锁的最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lock和Condition（下）：Dubbo如何用管程实现异步转同步？"><span class="toc-text">Lock和Condition（下）：Dubbo如何用管程实现异步转同步？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#同步与异步"><span class="toc-text">同步与异步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo异步转同步"><span class="toc-text">Dubbo异步转同步</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Semaphore：如何快速实现一个限流器？"><span class="toc-text">Semaphore：如何快速实现一个限流器？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Semaphore信号量模型"><span class="toc-text">Semaphore信号量模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#快速实现一个限流器（Semaphore）"><span class="toc-text">快速实现一个限流器（Semaphore）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReadWriteLock：如何快速一个完备的缓存？"><span class="toc-text">ReadWriteLock：如何快速一个完备的缓存？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是读写锁（ReadWriteLock）"><span class="toc-text">什么是读写锁（ReadWriteLock）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#快速实现一个缓存"><span class="toc-text">快速实现一个缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#读写锁总结"><span class="toc-text">读写锁总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#StampedLock：有没有比读写锁更快的锁？"><span class="toc-text">StampedLock：有没有比读写锁更快的锁？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ReentrantReadWriteLock和StampedLock的比较"><span class="toc-text">ReentrantReadWriteLock和StampedLock的比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#StampedLock注意事项"><span class="toc-text">StampedLock注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CountDownLatch和CyclicBarrier：如何让多线程步调一致？"><span class="toc-text">CountDownLatch和CyclicBarrier：如何让多线程步调一致？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍CountDownLactch和CyclicBarrier"><span class="toc-text">介绍CountDownLactch和CyclicBarrier</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#并发容器：都有哪些”坑”需要我们填？"><span class="toc-text">并发容器：都有哪些”坑”需要我们填？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#同步容器"><span class="toc-text">同步容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#并发容器"><span class="toc-text">并发容器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原子类：无锁工具类的典范"><span class="toc-text">原子类：无锁工具类的典范</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#原子类本质（CAS）"><span class="toc-text">原子类本质（CAS）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK原子类概览"><span class="toc-text">JDK原子类概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Executor与线程池：如何创建正确的线程池？"><span class="toc-text">Executor与线程池：如何创建正确的线程池？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#线程池也是一种生产者——消费者模式"><span class="toc-text">线程池也是一种生产者——消费者模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java-util-concurrent-CompletionStage接口理解"><span class="toc-text">java.util.concurrent.CompletionStage接口理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#利用CompletionService实现Dubbo中的Forking-Cluster"><span class="toc-text">利用CompletionService实现Dubbo中的Forking Cluster</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结-1"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fork-Join：单机版的MapReduce"><span class="toc-text">Fork/Join：单机版的MapReduce</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分治任务模型"><span class="toc-text">分治任务模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fork-Join的使用"><span class="toc-text">Fork/Join的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结-2"><span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg)"><div id="post-info"><div id="post-title"><div class="posttitle">Java并发编程实战②-并发工具类</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-09-22<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2019-11-23</time><span class="post-meta__separator mobile_hidden">|</span><span class="mobile_hidden"><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">Java并发编程实战</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon" aria-hidden="true"></i><span>字数总计: </span><span class="word-count">6.1k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon" aria-hidden="true"></i><span>阅读时长: 20 分钟</span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><p>[TOC]</p>
+<h1 id="Java并发编程实战-并发工具类"><a href="#Java并发编程实战-并发工具类" class="headerlink" title="Java并发编程实战-并发工具类"></a>Java并发编程实战-并发工具类</h1><blockquote>
+<p>Java并发编程实战是学习《并发编程实战》和极客时间《Java并发编程》的记录。</p>
+</blockquote>
+<h2 id="并发工具类-总览"><a href="#并发工具类-总览" class="headerlink" title="并发工具类-总览"></a>并发工具类-总览</h2><blockquote>
+<p>第二部分：并发工具类</p>
+<ol>
+<li>Lock和Condition（上）：隐藏在并发包中的管程</li>
+<li>Lock和Condition（下）：Dubbo如何用管程实现异步转同步？</li>
+<li>Semaphore：如何快速实现一个限流器？</li>
+<li>ReadWriteLock：如何快速一个完备的缓存？</li>
+<li>StampedLock：有没有比读写锁更快的锁？</li>
+<li>CountDownLatch和CyclicBarrier：如何让多线程步调一致？</li>
+<li>并发容器：都有哪些”坑”需要我们填？</li>
+<li>原子类：无锁工具类的典范</li>
+<li>Executor与线程池：如何创建正确的线程池？</li>
+<li>Feture：如何多线程实现最优的”烧水泡茶”程序？</li>
+<li>CompletableFuture：异步编程没有那么难。</li>
+<li>CompletionService：如何批量执行异步任务？</li>
+<li>Fork/Join：单机版的MapReduce</li>
+</ol>
+</blockquote>
+<h2 id="Lock和Condition（上）：隐藏在并发包中的管程"><a href="#Lock和Condition（上）：隐藏在并发包中的管程" class="headerlink" title="Lock和Condition（上）：隐藏在并发包中的管程"></a>Lock和Condition（上）：隐藏在并发包中的管程</h2><blockquote>
+<p>Java SDK并发包内容很丰富，但是最核心的还是对管程的实现。</p>
+<p><strong>Java SDK 并发包通过 Lock 和 Condition 两个接口来实现管程，其中 Lock 用于解决互斥 问题，Condition 用于解决同步问题</strong>。</p>
+<p><strong>Synchronized是默认对管程的实现。</strong></p>
+<p>并发编程的两大核心问题：</p>
+<ol>
+<li>互斥：即同一时刻只允许一个线程 访问共享资源;</li>
+<li>同步：即线程之间如何通信、协作。</li>
+</ol>
+</blockquote>
+<h3 id="Lock再造管程的理由：Synchronized升级版"><a href="#Lock再造管程的理由：Synchronized升级版" class="headerlink" title="Lock再造管程的理由：Synchronized升级版"></a>Lock再造管程的理由：Synchronized升级版</h3><ul>
+<li>synchronized已经实现了管程了，为什么还需要重复造轮子呢？<ul>
+<li>synchronized 申请资源的时候，如果申请不到，线程直 接进入阻塞状态了，而线程进入阻塞状态，啥都干不了，也释放不了线程已经占有的资源。</li>
+</ul>
+</li>
+<li>我们从解决死锁问题出发，破坏”不可抢占条件”。使用synchronized是无法实现的，这里就引出了，我们如何设计一个新的互斥锁的问题。可以有三种方案和Lock的具体实现<ol>
+<li>能够响应中断：<code>void lockInterruptibly() throws InterruptedException;</code></li>
+<li>支持超时：<code>boolean tryLock(long time, TimeUnit unit) throws InterruptedException;</code></li>
+<li>非阻塞地获取锁：<code>boolean tryLock();</code></li>
+</ol>
+</li>
+<li>Lock如何保证可见性<ul>
+<li>Lock的使用有一个经典的范式：<code>try{}finally{}</code></li>
+<li>java多线程的可见性是通过happens-before规则保证的。</li>
+<li><strong>Java SDK 里面锁</strong>可见性：它是<strong>利用了 volatile 相关的 Happens-Before 规则</strong><ul>
+<li>顺序性规则</li>
+<li>volatile变量规则</li>
+<li>传递性规则</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="什么是可重入锁（ReentrantLock）"><a href="#什么是可重入锁（ReentrantLock）" class="headerlink" title="什么是可重入锁（ReentrantLock）"></a>什么是可重入锁（<code>ReentrantLock</code>）</h3><blockquote>
+<p><code>ReentrantLock</code>可重入锁：指的是线程可以重复获取通一把锁。</p>
+<p>可重入函数：指的是多个线程可以同时调用该函数。线程安全</p>
+</blockquote>
+<h3 id="公平锁和非公平锁"><a href="#公平锁和非公平锁" class="headerlink" title="公平锁和非公平锁"></a>公平锁和非公平锁</h3><blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">    sync = fair ? <span class="keyword">new</span> FairSync() : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Java构造公平锁和非公平锁是通过重入锁的构造函数实现的。</p>
+<p>公平锁和非公平锁的应用场景：</p>
+<ul>
+<li>锁都对应着一个等待 队列，如果一个线程没有获得锁，就会进入等待队列，当有线程释放锁的时候，就需要从等待队 列中唤醒一个等待的线程。</li>
+<li>公平锁：唤醒的策略就是谁等待的时间长，就唤醒谁。</li>
+<li>非公平锁：自己定义的策略。</li>
+</ul>
+</blockquote>
+<h3 id="用锁的最佳实践"><a href="#用锁的最佳实践" class="headerlink" title="用锁的最佳实践"></a>用锁的最佳实践</h3><blockquote>
+<ol>
+<li>永远只在更新对象的成员变量时加锁</li>
+<li>永远只在访问可变的成员变量时加锁</li>
+<li>永远不在调用其他对象的方法时加锁</li>
+</ol>
+</blockquote>
+<p><strong>并发问题，本来就难以诊断，所以你一定要让你的代码尽量安全，尽量简单，哪怕有一点可能会 出问题，都要努力避免。</strong></p>
+<h2 id="Lock和Condition（下）：Dubbo如何用管程实现异步转同步？"><a href="#Lock和Condition（下）：Dubbo如何用管程实现异步转同步？" class="headerlink" title="Lock和Condition（下）：Dubbo如何用管程实现异步转同步？"></a>Lock和Condition（下）：Dubbo如何用管程实现异步转同步？</h2><blockquote>
+<p>Condition 用于解决同步问题，<strong>Condition 实现了管程模型里面的条件变量</strong>。</p>
+<p>Java 语言内置（<code>Synchronized</code>）的管程里只有一个条件变 量，而 Lock&amp;Condition 实现的管程是支持多个条件变量的，这是二者的一个重要区别。</p>
+<p>谈谈<code>Synchronize</code>和<code>Lock&amp;Condition</code>实现管程API（”等待-通知”）的区别：</p>
+<ul>
+<li>Lock&amp;Condition的API：<strong>await()、 signal()、signalAll()</strong></li>
+<li>Synchronize的API：wait()、notify()、notifyAll()</li>
+</ul>
+</blockquote>
+<h3 id="同步与异步"><a href="#同步与异步" class="headerlink" title="同步与异步"></a>同步与异步</h3><blockquote>
+<p>什么是异步：<strong>通俗点来讲就是调用方是否需要等待结果，需要等待结果，就是同步。 不等待结果，就是异步</strong>。</p>
+<p>异步调用：调用方创建一个子线程，在子线程中执行方法调用。</p>
+<p>异步方法：方法实现的时候，创建一个新的线程执行主要逻辑，主线程直接 return。</p>
+</blockquote>
+<h3 id="Dubbo异步转同步"><a href="#Dubbo异步转同步" class="headerlink" title="Dubbo异步转同步"></a>Dubbo异步转同步</h3><blockquote>
+<p>由于TCP协议本身就是异步的，Dubbo的底层协议就是TCP协议，我们经常要发起RPC调用。在TCP协议层面，发送完RPC请求后，线程是不会等待RPC的响应结果的。但现实我们确实同步调用的。</p>
+<p>而且Dubbo源码：<code>DefaultFuture.get()</code>方法实现的等待-通知机制。</p>
+</blockquote>
+<h2 id="Semaphore：如何快速实现一个限流器？"><a href="#Semaphore：如何快速实现一个限流器？" class="headerlink" title="Semaphore：如何快速实现一个限流器？"></a>Semaphore：如何快速实现一个限流器？</h2><blockquote>
+<p>Semaphore信息量，是并发编程领域的终结者。几乎所有支持并发编程的语言都支持信号量机制。</p>
+</blockquote>
+<h3 id="Semaphore信号量模型"><a href="#Semaphore信号量模型" class="headerlink" title="Semaphore信号量模型"></a>Semaphore信号量模型</h3><blockquote>
+<p><img alt="image-20191012084451896" data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g7v4jtwinsj30ar0a4my1.jpg" class="lazyload"></p>
+<p>信号量模型的组成：一个计数器，一个等待队列，三个方法。在信号量 模型里，计数器和等待队列对外是透明的，所以只能通过信号量模型提供的三个方法来访问它 们，这三个方法分别是:init()、down() 和 up()。</p>
+<p>init()：设置计数器的初始化值</p>
+<p>down()==P操作：semWait()==<code>acquire()</code>，计数器的值减 1;如果此时计数器的值小于 0，则当前线程将被阻塞，否则当前线程 可以继续执行。</p>
+<p>up()==V操作：semSignal()==<code>release()</code>，计数器的值加 1;如果此时计数器的值小于或者等于 0，则唤醒等待队列中的一个线 程，并将其从等待队列中移除。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> concurrent._16;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Queue;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 描述:</span></span><br><span class="line"><span class="comment"> * 信号量本质</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Noah</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@create</span> 2019-10-12 08:58</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">_16_Semaphore</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计数器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 等待队列</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Queue queue;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化计数器</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> count</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">_16_Semaphore</span><span class="params">(<span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.count = count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计数器的值减 1;如果此时计数器的值小于 0，</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * 则当前线程将被阻塞，否则当前线程 可以继续执行。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">down</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        count--;</span><br><span class="line">        <span class="keyword">if</span> (count &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//当前线程加入等待队列</span></span><br><span class="line">            <span class="comment">//阻塞当前线程</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计数器的值加 1;如果此时计数器的值小于或者等于 0，</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * 则唤醒等待队列中的一个线 程，并将其从等待队列中移除。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">up</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">if</span> (count &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//移除等待队列</span></span><br><span class="line">            <span class="comment">//唤醒等待线程</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+<h3 id="快速实现一个限流器（Semaphore）"><a href="#快速实现一个限流器（Semaphore）" class="headerlink" title="快速实现一个限流器（Semaphore）"></a>快速实现一个限流器（Semaphore）</h3><ul>
+<li>Semaphore最强大的地方：<strong>Semaphore可以允许多个线程访问一个临界区</strong></li>
+<li>栗子：其中，你可能最熟悉数据库连接池，在同一时刻，一定是允许多个线 程同时使用连接池的，当然，每个连接在被释放前，是不允许其他线程使用的。</li>
+</ul>
+<h2 id="ReadWriteLock：如何快速一个完备的缓存？"><a href="#ReadWriteLock：如何快速一个完备的缓存？" class="headerlink" title="ReadWriteLock：如何快速一个完备的缓存？"></a>ReadWriteLock：如何快速一个完备的缓存？</h2><blockquote>
+<p>使用管程和信号量这两个同步原语可以解决所有的并发问题。但是JDK并发包为什么还提供了很多工具类呢？</p>
+<p>分场景优化性能，提升易用性。</p>
+</blockquote>
+<h3 id="什么是读写锁（ReadWriteLock）"><a href="#什么是读写锁（ReadWriteLock）" class="headerlink" title="什么是读写锁（ReadWriteLock）"></a>什么是读写锁（ReadWriteLock）</h3><ul>
+<li>读写锁的三条基本原则<ol>
+<li>允许多个线程同时读共享变量</li>
+<li>只允许一个线程写共享变量</li>
+<li>如果一个写线程正在执行写操作，此时禁止读线程读共享变量。</li>
+</ol>
+</li>
+<li>读写锁与互斥锁的一个重要区别就是读写锁允许多个线程同时读共享变量，读写锁的写操作是互斥的</li>
+<li>因此读写锁非常适合在缓存这种场景使用，读多写少的并发场景。</li>
+</ul>
+<h3 id="快速实现一个缓存"><a href="#快速实现一个缓存" class="headerlink" title="快速实现一个缓存"></a>快速实现一个缓存</h3><ul>
+<li><p>两种实现缓存的方案：</p>
+<ol>
+<li>初始化的时候，一次性全部数据载入缓存。适合数据量不大的场景。</li>
+<li>按需加载缓存：查找数据不在缓存，再查询数据加入到缓存中。</li>
+</ol>
+</li>
+<li><pre><code class="java"><span class="comment">/**</span>
+<span class="comment"> * 描述:</span>
+<span class="comment"> * 使用读写锁来实现缓存</span>
+<span class="comment"> *</span>
+<span class="comment"> * <span class="doctag">@author</span> Noah</span>
+<span class="comment"> * <span class="doctag">@create</span> 2019-10-13 20:55</span>
+<span class="comment"> */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">_17_ReadWriteLock_Cache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>{
+
+    <span class="comment">/**</span>
+<span class="comment">     * 存储数据的载体：非线程安全</span>
+<span class="comment">     */</span>
+    <span class="keyword">final</span> Map&lt;K, V&gt; data = <span class="keyword">new</span> HashMap&lt;&gt;();
+
+    <span class="comment">/**</span>
+<span class="comment">     * 可重入读写锁</span>
+<span class="comment">     */</span>
+    <span class="keyword">final</span> ReentrantReadWriteLock rwl = <span class="keyword">new</span> ReentrantReadWriteLock();
+
+    <span class="comment">/**</span>
+<span class="comment">     * 读锁</span>
+<span class="comment">     */</span>
+    <span class="keyword">final</span> Lock rl = rwl.readLock();
+
+    <span class="comment">/**</span>
+<span class="comment">     * 写锁</span>
+<span class="comment">     */</span>
+    <span class="keyword">final</span> Lock wl = rwl.writeLock();
+
+    <span class="comment">/**</span>
+<span class="comment">     * 读缓存操作：</span>
+<span class="comment">     * &lt;p&gt;</span>
+<span class="comment">     * 按需加载</span>
+<span class="comment">     *</span>
+<span class="comment">     * <span class="doctag">@param</span> key</span>
+<span class="comment">     * <span class="doctag">@return</span></span>
+<span class="comment">     */</span>
+    <span class="function"><span class="keyword">public</span> V <span class="title">getValue</span><span class="params">(K key)</span> </span>{
+
+        V val = <span class="keyword">null</span>;
+
+        rl.lock();
+        <span class="keyword">try</span> {
+            val = data.get(key);
+        } <span class="keyword">finally</span> {
+            rl.unlock();
+        }
+
+        <span class="keyword">if</span> (val != <span class="keyword">null</span>) {
+            <span class="keyword">return</span> val;
+        }
+
+        wl.lock();
+
+        <span class="keyword">try</span> {
+            <span class="comment">//再次校验：可能其他线程已经获取到了数据</span>
+            val = data.get(key);
+
+            <span class="keyword">if</span> (val == <span class="keyword">null</span>) {
+                <span class="comment">//查询数据写入缓存场景</span>
+                data.put(key, val);
+            }
+
+        } <span class="keyword">finally</span> {
+            wl.unlock();
+        }
+        <span class="keyword">return</span> val;
+    }
+
+    <span class="comment">/**</span>
+<span class="comment">     * 写缓存操作</span>
+<span class="comment">     *</span>
+<span class="comment">     * <span class="doctag">@param</span> k</span>
+<span class="comment">     * <span class="doctag">@param</span> v</span>
+<span class="comment">     */</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeValue</span><span class="params">(K k, V v)</span> </span>{
+        wl.lock();
+        <span class="keyword">try</span> {
+            data.put(k, v);
+        } <span class="keyword">finally</span> {
+            wl.unlock();
+        }
+    }
+
+}
+
+&lt;!--￼<span class="number">2</span>--&gt;
+</code></pre>
+</li>
+</ul>
+<h3 id="读写锁总结"><a href="#读写锁总结" class="headerlink" title="读写锁总结"></a>读写锁总结</h3><ul>
+<li>读写锁跟<code>ReentrantLock</code>类似，都是实现了Lock。支持公平模式和非公平模式。</li>
+<li>只有写锁支持条件变量， 读锁是不支持条件变量的。</li>
+</ul>
+<h2 id="StampedLock：有没有比读写锁更快的锁？"><a href="#StampedLock：有没有比读写锁更快的锁？" class="headerlink" title="StampedLock：有没有比读写锁更快的锁？"></a>StampedLock：有没有比读写锁更快的锁？</h2><blockquote>
+<p>读多写少的并发场景，使用ReentranstReadWriteLock性能已经很好了，但是JDK1.8提供了一个叫StampedLock的锁。</p>
+</blockquote>
+<h3 id="ReentrantReadWriteLock和StampedLock的比较"><a href="#ReentrantReadWriteLock和StampedLock的比较" class="headerlink" title="ReentrantReadWriteLock和StampedLock的比较"></a>ReentrantReadWriteLock和StampedLock的比较</h3><ol>
+<li><p>ReadWriteLock：只支持两种模式，读锁和写锁。</p>
+</li>
+<li><p>StampedLock：支持三种模式，写锁、悲观读锁和乐观读（无锁）。前面二者和ReadWriteLock类似</p>
+</li>
+<li><p>在ReadWriteLock的读写锁，在有线程在读操作的时候，写操作会被阻塞的。但是在StampedLcok下，是乐观读的时候，是允许一个线程执行写操作。</p>
+</li>
+<li><pre><code class="java">    <span class="comment">/**</span>
+<span class="comment">     * 乐观读栗子</span>
+<span class="comment">     */</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">optimisticRead</span><span class="params">()</span> </span>{
+
+        <span class="keyword">long</span> stamp = stampedLock.tryOptimisticRead();
+
+        <span class="comment">//乐观读是无锁的，把成员变量读入到局部变量,非线程安全的。</span>
+        <span class="keyword">int</span> curX = x;
+        <span class="keyword">int</span> curY = y;
+
+        <span class="comment">//校验：在执行读的过程是否有写操作，有的话就升级为悲观读</span>
+        <span class="keyword">if</span> (!stampedLock.validate(stamp)) {
+
+            stamp = stampedLock.readLock();
+            <span class="keyword">try</span> {
+                curX = x;
+                curY = y;
+            } <span class="keyword">finally</span> {
+                stampedLock.unlockRead(stamp);
+            }
+
+        }
+
+    }
+
+&lt;!--￼<span class="number">3</span>--&gt;</code></pre>
+</li>
+</ol>
+<ul>
+<li>stamp和数据库的version是同样作用的。</li>
+</ul>
+<h3 id="StampedLock注意事项"><a href="#StampedLock注意事项" class="headerlink" title="StampedLock注意事项"></a>StampedLock注意事项</h3><ol>
+<li>StampedLcok的功能仅仅是ReadWriteLock的子集</li>
+<li>StampedLcok是不支持重入的。</li>
+<li>StampedLock 的悲观读锁、写锁都不支持条件变量。</li>
+<li>使用 StampedLock 一定不要调用中断操作，如果需要支持中断功能，一定使用可中断的 悲观读锁 readLockInterruptibly() 和写锁 writeLockInterruptibly()。不然cpu会100%</li>
+</ol>
+<h2 id="CountDownLatch和CyclicBarrier：如何让多线程步调一致？"><a href="#CountDownLatch和CyclicBarrier：如何让多线程步调一致？" class="headerlink" title="CountDownLatch和CyclicBarrier：如何让多线程步调一致？"></a>CountDownLatch和CyclicBarrier：如何让多线程步调一致？</h2><blockquote>
+<p>对账系统的优化：单线程—&gt;多线程—&gt;线程池—&gt;CountDownLatch（实现主线程等待）</p>
+<p>—&gt;考虑使用双队列（但是要考虑到步调）—&gt;CyclicBarrier（同步优化）</p>
+<p>对账系统的最终实现流程：采用双队列，队列1：查询订单，队列2：派单队列。有未对账的订单，调用对账逻辑,</p>
+<p>CyclicBarrier协调两个队列的步调。</p>
+</blockquote>
+<h3 id="介绍CountDownLactch和CyclicBarrier"><a href="#介绍CountDownLactch和CyclicBarrier" class="headerlink" title="介绍CountDownLactch和CyclicBarrier"></a>介绍CountDownLactch和CyclicBarrier</h3><ul>
+<li><code>java.util.concurrent.CountDownLatch</code>和<code>java.util.concurrent.CyclicBarrier</code>的比较：<ol>
+<li>同：JDK并发包提供两个易用的线程同步工具类</li>
+<li>异：CountDownLatch 主要用来解决一个线程等待 多个线程的场景 。CountDownLatch 的计数器是不能循环利用的 </li>
+<li>异：CyclicBarrier 是一组线程之间互相等待 ，但CyclicBarrier 的计数器是可以循环利用的 。</li>
+</ol>
+</li>
+</ul>
+<h2 id="并发容器：都有哪些”坑”需要我们填？"><a href="#并发容器：都有哪些”坑”需要我们填？" class="headerlink" title="并发容器：都有哪些”坑”需要我们填？"></a>并发容器：都有哪些”坑”需要我们填？</h2><blockquote>
+<p>并发容器和同步容器是两个概念。容器4大类型： List、Map、Set 和 Queue 。并非所有容器都是线程安全。</p>
+<p>常见同步容器：经过Collections包装后的线程安全的容器（synchronized实现），还有vector、stack、hashtable。</p>
+<p>并发容器：性能更好。解决同步容器使用synchronized来保证互斥，串行度太高了。</p>
+</blockquote>
+<ul>
+<li>如何将非线程安全的容器变成线程安全的容器? <ol>
+<li>只要把非线程安全的容器封装在对象内部，然后控制好访问路径就可以了。 （同管程思想）</li>
+</ol>
+</li>
+</ul>
+<h3 id="同步容器"><a href="#同步容器" class="headerlink" title="同步容器"></a>同步容器</h3><ul>
+<li>同步容器注意的地方：<ol>
+<li>组合操作注意竞态条件问题：即使每个操作都能保证原子性，但是组合操作无法保证原子性。</li>
+<li>使用迭代器遍历线程安全容器：要确保线程安全，需要我们使用synchronized(集合)再遍历容器。</li>
+</ol>
+</li>
+</ul>
+<h3 id="并发容器"><a href="#并发容器" class="headerlink" title="并发容器"></a>并发容器</h3><ul>
+<li><p>并发容器注意的地方：</p>
+<ol>
+<li><p>常见并发容器</p>
+<ul>
+<li><img alt="image-20191016085853027" data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g7zrfml0fvj30vx0a1tex.jpg" class="lazyload"></li>
+</ul>
+</li>
+<li><p><code>java.util.concurrent.CopyOnWriteArrayList</code></p>
+<ul>
+<li>特点：内部维护一个数组，在遍历（读）容器是在原内部数组进行，写操作的copy一个新的数组。</li>
+<li>场景：写操作非常少的场景，而且能够容忍读写的短暂不一致 。</li>
+<li>注意”坑”：<ul>
+<li>CopyOnWriteArrayList 迭代器是只读的，不支持增删改。 </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>Map</code></p>
+<ul>
+<li><code>ConcurrentHashMap</code><ul>
+<li>key是无序的</li>
+<li>key和value都不能为空。</li>
+</ul>
+</li>
+<li><code>ConcurrentSkipListMap</code><ul>
+<li>key是有序的</li>
+<li>key和value都不能为空。</li>
+<li>基于SkipList（跳表）实现，平均时间复杂度为O(log n))</li>
+</ul>
+</li>
+<li>Map比较示意图<ul>
+<li><img alt="image-20191016091229480" data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g7zrtsgwqkj30jm09nn20.jpg" class="lazyload"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>Set</code></p>
+<ul>
+<li>CopyOnWriteArraySet </li>
+<li>ConcurrentSkipListSet </li>
+</ul>
+</li>
+<li><p><code>Queue</code></p>
+<blockquote>
+<ol>
+<li>不同维度分类<ul>
+<li>阻塞（ Blocking ）和非阻塞</li>
+<li>单端（ Queue ）和双端（Deque ）：单端指的是只能队尾入队，队首出队;而双端指的是队首队尾皆可入 队出队。 </li>
+</ul>
+</li>
+<li>两个维度组合之后的Queue<ul>
+<li>单端阻塞队列<ul>
+<li>ArrayBlockingQueue（数组）、LinkedBlockingQueue（队列）、 SynchronousQueue（无队列）、LinkedTransferQueue（2+3的升级版）、PriorityBlockingQueue（优先级队列） 和 DelayQueue （延时队列）</li>
+</ul>
+</li>
+<li>双端阻塞队列<ul>
+<li>LinkedBlockingDeque </li>
+</ul>
+</li>
+<li>单端非阻塞队列<ul>
+<li>ConcurrentLinkedQueue</li>
+</ul>
+</li>
+<li>双端非阻塞队列<ul>
+<li>ConcurrentLinkedDeque </li>
+</ul>
+</li>
+<li>只有 ArrayBlockingQueue 和 LinkedBlockingQueue 是支持有界 的，所以在使用其他无界队列时，一定要充分考虑是否存在导致 OOM 的隐患 </li>
+</ul>
+</li>
+</ol>
+</blockquote>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="原子类：无锁工具类的典范"><a href="#原子类：无锁工具类的典范" class="headerlink" title="原子类：无锁工具类的典范"></a>原子类：无锁工具类的典范</h2><blockquote>
+<p>原子性问题：我们之前都是使用互斥锁来解决的，我们可以考虑使用无锁方案来解决，其性能更好。</p>
+</blockquote>
+<h3 id="原子类本质（CAS）"><a href="#原子类本质（CAS）" class="headerlink" title="原子类本质（CAS）"></a>原子类本质（CAS）</h3><ul>
+<li><p>原子类性能高的原因：</p>
+<ul>
+<li>硬件支持：CPU为了解决并发问题，提供了CAS指令。</li>
+</ul>
+</li>
+<li><p>什么是CAS指令？</p>
+<ul>
+<li>CAS：Compare and swap，比较并交换。</li>
+<li>CAS指令包含三个参数：共享变量的内存地址A，用于比较的值B和共享变量的新值C。</li>
+<li>只有当内存中地址 A 处的值等于 B 时，才能将内存中地址 A 处的值更新为新值 C 。</li>
+<li>作为一条 CPU 指令，CAS 指令本身是能够保证原 子性的。 </li>
+</ul>
+</li>
+<li><p>CAS+自旋 ：循环尝试</p>
+</li>
+<li><pre><code class="java"><span class="keyword">volatile</span> <span class="keyword">int</span> count;
+
+<span class="comment">/**</span>
+<span class="comment"> * cas+自旋</span>
+<span class="comment"> */</span>
+<span class="function"><span class="keyword">void</span> <span class="title">addOne</span><span class="params">()</span> </span>{
+    <span class="keyword">int</span> newVal;
+
+    <span class="keyword">do</span> {
+        newVal = count + <span class="number">1</span>;
+    } <span class="keyword">while</span> (count != cas(count, newVal));
+
+</code></pre>
+</li>
+</ul>
+<pre><code>}
+
+/**
+ * 模拟cas指令
+ *
+ * @param expect
+ * @param newVal
+ * @return
+ */
+public int cas(int expect, int newVal) {
+
+    int curVal = count;
+
+    if (curVal == expect) {
+        count = newVal;
+    }
+    //返回写入前的值
+    return curVal;
+}</code></pre>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- CAS需要注意ABA问题</span><br><span class="line"></span><br><span class="line">  1. 解决方案：参考乐观锁机制，具体：更新的时候增加一个版本号。</span><br><span class="line"></span><br><span class="line">### Java原子类如何实现</span><br><span class="line"></span><br><span class="line">&gt;-  jdk源码实现CAS</span><br><span class="line">&gt;</span><br><span class="line">&gt;</span><br><span class="line">&gt;```java</span><br><span class="line">&gt;public final int getAndAddInt(Object var1, long var2, int var4) &#123;</span><br><span class="line">&gt;    int var5;</span><br><span class="line">&gt;    do &#123;</span><br><span class="line">&gt;        var5 = this.getIntVolatile(var1, var2);</span><br><span class="line">&gt;    &#125; while(!this.compareAndSwapInt(var1, var2, var5, var5 + var4));</span><br><span class="line">&gt;</span><br><span class="line">&gt;    return var5;</span><br><span class="line">&gt;&#125;</span><br><span class="line">&gt;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>CAS经典规范</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="keyword">do</span> &#123;</span><br><span class="line">&gt;<span class="comment">// 获取当前值</span></span><br><span class="line">&gt;oldV = xxxx;</span><br><span class="line">&gt;<span class="comment">// 根据当前值计算新值 newV = ...oldV...</span></span><br><span class="line">&gt;&#125;<span class="keyword">while</span>(!compareAndSet(oldV,newV);</span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+<h3 id="JDK原子类概览"><a href="#JDK原子类概览" class="headerlink" title="JDK原子类概览"></a>JDK原子类概览</h3><ul>
+<li>jdk原子化的基本数据 类型、原子化的对象引用类型、原子化数组、原子化对象属性更新器和原子化的累加器 。</li>
+</ul>
+<p><img alt="image-20191017093828117" data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g80y75tk51j311i0ffn85.jpg" class="lazyload"></p>
+<ul>
+<li>AtomicStampedReference 和 AtomicMarkableReference 这两个原子类可以解决 ABA 问题 。乐观锁机制。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><blockquote>
+<p>Java 提供的原子类能够解决一些简单的原子性问题，但你可能会发现，上面我们所有原子类的方 法都是针对一个共享变量的，如果你需要解决多个变量的原子性问题，建议还是使用互斥锁方 案。原子类虽好，但使用要慎之又慎。 </p>
+<p>jdk原子类都提供了compareAndSet()方法，但是建议不好自己去实现无锁算法。</p>
+</blockquote>
+<h2 id="Executor与线程池：如何创建正确的线程池？"><a href="#Executor与线程池：如何创建正确的线程池？" class="headerlink" title="Executor与线程池：如何创建正确的线程池？"></a>Executor与线程池：如何创建正确的线程池？</h2><blockquote>
+<p>创建线程是一个重量级的对象，应该避免频繁创建和销毁。</p>
+<p>所以使用线程池。线程池跟普通的池化资源不同，不是acquire()，之后就release()。</p>
+<p>而是采用生产者—消费者模式。</p>
+</blockquote>
+<h3 id="线程池也是一种生产者——消费者模式"><a href="#线程池也是一种生产者——消费者模式" class="headerlink" title="线程池也是一种生产者——消费者模式"></a>线程池也是一种生产者——消费者模式</h3><blockquote>
+<ul>
+<li>自定义简单线程池</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 阻塞队列</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> BlockingQueue&lt;Runnable&gt; blockingQueue;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 工作线程</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> List&lt;NoahThreadPool&gt; threadPools = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 构造线程池</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> queue</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> poolSize</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">_22_NoahThreadPool</span><span class="params">(BlockingQueue&lt;Runnable&gt; queue, <span class="keyword">int</span> poolSize)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">this</span>.blockingQueue = queue;</span><br><span class="line"><span class="keyword">for</span> (; poolSize &gt; <span class="number">0</span>; poolSize--) &#123;</span><br><span class="line">   NoahThreadPool thread = <span class="keyword">new</span> NoahThreadPool();</span><br><span class="line">   thread.start();</span><br><span class="line">   threadPools.add(thread);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 暴露外部任务接口</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> runnable</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable runnable)</span> </span>&#123;</span><br><span class="line">blockingQueue.add(runnable);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NoahThreadPool</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           Runnable task = blockingQueue.take();</span><br><span class="line">           task.run();</span><br><span class="line">       &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>jdk自定义线程池通过：ThreadPoolExecutor</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                     <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                     <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                     TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                     BlockingQueue&lt;Runnable&gt; workQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">                     ThreadFactory threadFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">                     RejectedExecutionHandler handler)</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>参数解析</p>
+<ol>
+<li>corePoolSize ：表示线程池保有的最小线程数 </li>
+<li>maximumPoolSize ：表示线程池创建的最大线程数 </li>
+<li>keepAliveTime &amp; unit ：表示”一段时间”线程的空闲状态。</li>
+<li>workQueue ：工作队列</li>
+<li>threadFactory ：通过这个参数你可以自定义如何创建线程，例如你可以给线程指定一个有意义的名字。 </li>
+<li>handler ：拒绝策略（当maximumpoolsize都在工作&amp;&amp;queue也满了&amp;&amp;queue是有界队列）<ul>
+<li>CallerRunsPolicy ：提交任务的线程自己去执行任务</li>
+<li>AbortPolicy ：默认拒绝策略，会抛出RejectedExecutionException </li>
+<li>DiscardPolicy :直接丢弃任务，没有任何异常抛出。 </li>
+<li>DiscardOldestPolicy :丢弃最老的任务，其实就是把最早进入工作队列的任务丢弃，然后把新任务加入 到工作队列。 </li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>注意事项：</p>
+<ol>
+<li><p>强烈建议使用有界队列 </p>
+</li>
+<li><p>默认拒绝策略要慎重使用 </p>
+</li>
+<li><p>异常处理 ：发生了异常却收不到通知，误认为正常运行</p>
+<ul>
+<li><pre><code>try { //业务逻辑
+} catch (RuntimeException x) { //按需处理
+} catch (Throwable x) { //按需处理
+}
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">     </span><br><span class="line">    </span><br><span class="line">## Feture：如何多线程实现最优的&quot;烧水泡茶&quot;程序？</span><br><span class="line">ThreadPoolExecutor线程池获取执行结果。在`public void execute(Runnable command)`无法获得执行结果。</span><br><span class="line">但是在该类中提供了三个submit()方法和一个FutureTask工具类来获取任务执行的结果。</span><br><span class="line">- submit()方法的三个参数</span><br><span class="line">- ```java</span><br><span class="line"> //有返回值</span><br><span class="line"> &lt;T&gt; Future&lt;T&gt; submit(Callable&lt;T&gt; task);</span><br><span class="line"> &lt;T&gt; Future&lt;T&gt; submit(Runnable task, T result);</span><br><span class="line"> Future&lt;?&gt; submit(FutureTask&lt;T&gt; futureTask);</span><br><span class="line"> //无返回值</span><br><span class="line"> Future&lt;?&gt; submit(Runnable task); </span><br></pre></td></tr></table></figure></code></pre></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>Future接口的五个方法</p>
+</li>
+<li><pre><code class="java"><span class="comment">// 取消任务</span>
+<span class="function"><span class="keyword">boolean</span> <span class="title">cancel</span><span class="params">(<span class="keyword">boolean</span> mayInterruptIfRunning)</span></span>; 
+<span class="comment">// 判断任务是否已取消</span>
+<span class="function"><span class="keyword">boolean</span> <span class="title">isCancelled</span><span class="params">()</span></span>;
+<span class="comment">// 判断任务是否已结束</span>
+<span class="function"><span class="keyword">boolean</span> <span class="title">isDone</span><span class="params">()</span></span>;
+<span class="comment">// 获得任务执行结果</span>
+get();
+<span class="comment">// 获得任务执行结果，支持超时 </span>
+get(<span class="keyword">long</span> timeout, TimeUnit unit);
+&lt;!--￼<span class="number">9</span>--&gt;</code></pre>
+</li>
+<li><p>还有一个区别可以手动指定线程池参数。</p>
+</li>
+<li><p>默认情况下CompletableFuture会使用公共的ForkJoinPool线程池，这个线程池默认创建的线程数是CPU的 核数(也可以通过JVM option:-Djava.util.concurrent.ForkJoinPool.common.parallelism来设置ForkJoinPool 线程池的线程数)。 </p>
+</li>
+<li><p>建议你要根据不同的业务类型创建不同的线程池，以避免互相干扰。 </p>
+</li>
+<li><p>对于 一个异步操作，你需要关注两个问题:一个是异步操作什么时候结束，另一个是如何获取异步操作的执行结果</p>
+</li>
+</ul>
+<h3 id="java-util-concurrent-CompletionStage接口理解"><a href="#java-util-concurrent-CompletionStage接口理解" class="headerlink" title="java.util.concurrent.CompletionStage接口理解"></a>java.util.concurrent.CompletionStage接口理解</h3><blockquote>
+<p>任务之间是有时序关系的，比如：串行关系，并行关系，汇聚关系（AND、OR）等。</p>
+<p>CompletionStage接口可以清晰地描述任务之间的这种时序关系 。</p>
+<p><strong>异常处理</strong>也是必须要处理情况。</p>
+</blockquote>
+<ul>
+<li><p>串行关系</p>
+<ul>
+<li>CompletionStage接口里面描述串行关系，主要是thenApply、thenAccept、thenRun和thenCompose这四 个系列的接口。 </li>
+<li>这些方法里面Async代表的是异步执行fn、consumer或者action。其中，需要你注意的是thenCompose系列 方法，这个系列的方法会新创建出一个子流程，最终结果和thenApply系列是相同的。 </li>
+</ul>
+</li>
+<li><p>汇聚AND关系</p>
+<ul>
+<li>CompletionStage接口里面描述AND汇聚关系，主要是thenCombine、thenAcceptBoth和runAfterBoth系列 </li>
+</ul>
+</li>
+<li><p>汇聚OR关系</p>
+<ul>
+<li>CompletionStage接口里面描述OR汇聚关系，主要是applyToEither、acceptEither和runAfterEither系列</li>
+</ul>
+</li>
+<li><p>异常处理</p>
+<ul>
+<li><p>fn、consumer、action它们的核心方法都不允许抛出可检查异常，但是却无法限制它 们抛出运行时异常.</p>
+</li>
+<li><p>在非异步编程：我们可以使用try{}catch{}是捕获异常。</p>
+</li>
+<li><p>在异步编程：CompletionStage接口提供了相关的方法（链式编程）：</p>
+</li>
+<li><pre><code class="java"><span class="comment">//exceptionally()的使用非常类似于 try{}catch{}中的catch{}，</span>
+<span class="function">CompletionStage <span class="title">exceptionally</span><span class="params">(fn)</span></span>;
+<span class="comment">//whenComplete()和handle()系列方法就类似于try{}finally{}中的finally{}</span>
+<span class="comment">//whenComplete()和 handle()的区别在于whenComplete()不支持返回结果，而handle()是支持返回结果的。</span>
+<span class="function">CompletionStage&lt;R&gt; <span class="title">whenComplete</span><span class="params">(consumer)</span></span>;
+<span class="function">CompletionStage&lt;R&gt; <span class="title">whenCompleteAsync</span><span class="params">(consumer)</span></span>;
+<span class="function">CompletionStage&lt;R&gt; <span class="title">handle</span><span class="params">(fn)</span></span>;
+<span class="function">CompletionStage&lt;R&gt; <span class="title">handleAsync</span><span class="params">(fn)</span></span>;
+&lt;!--￼<span class="number">10</span>--&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="利用CompletionService实现Dubbo中的Forking-Cluster"><a href="#利用CompletionService实现Dubbo中的Forking-Cluster" class="headerlink" title="利用CompletionService实现Dubbo中的Forking Cluster"></a>利用CompletionService实现Dubbo中的Forking Cluster</h3><blockquote>
+<p>如何理解Forking cluster：支持并行地调用多个查询服务，只要有一个成 功返回结果，整个服务就可以返回了。 </p>
+</blockquote>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><blockquote>
+<p>当需要批量提交异步任务的时候建议你使用CompletionService。CompletionService将线程池Executor和阻 塞队列BlockingQueue的功能融合在了一起，能够让批量异步任务的管理更简单。除此之外， CompletionService能够让异步任务的执行结果有序化，先执行完的先进入阻塞队列，利用这个特性，你可 以轻松实现后续处理的有序性，避免无谓的等待，同时还可以快速实现诸如Forking Cluster这样的需求。 </p>
+<p>CompletionService的实现类ExecutorCompletionService，需要你自己创建线程池，虽看上去有些啰嗦，但 好处是你可以让多个ExecutorCompletionService的线程池隔离，这种隔离性能避免几个特别耗时的任务拖 垮整个应用的风险。 </p>
+</blockquote>
+<h2 id="Fork-Join：单机版的MapReduce"><a href="#Fork-Join：单机版的MapReduce" class="headerlink" title="Fork/Join：单机版的MapReduce"></a>Fork/Join：单机版的MapReduce</h2><blockquote>
+<p>前面我们讨论的三种任务模型，并行，聚合，批量并行这三种任务模型。在任务的层次来看（<code>ThreadPoolExecutor+Future</code>+<code>CompletableFuture</code>+<code>CompletionService</code>）：都是分工的事情（分工、同步、互斥）。</p>
+<p>但是<strong>分治</strong>这种任务模型我们还没解决：Java并发包里提供了一种叫做Fork/Join的并行计算框架，就 是用来支持分治这种任务模型的。 </p>
+<p>分治：把一个复杂的问题分解成多个相似的子问题，然后再把子问题分 解成更小的子问题，直到子问题简单到可以直接求解。 </p>
+</blockquote>
+<h3 id="分治任务模型"><a href="#分治任务模型" class="headerlink" title="分治任务模型"></a>分治任务模型</h3><blockquote>
+<p>分治任务分为两个阶段：任务分解和结果合并</p>
+<p>所以：分治任务一般都是采用递归算法</p>
+</blockquote>
+<h3 id="Fork-Join的使用"><a href="#Fork-Join的使用" class="headerlink" title="Fork/Join的使用"></a>Fork/Join的使用</h3><blockquote>
+<p>Fork/Join是一个并行计算的框架，主要就是用来支持分治任务模型的，这个计算框架里的Fork对应的是分治 任务模型里的任务分解，Join对应的是结果合并。Fork/Join计算框架主要包含两部分，一部分是分治任务的 线程池ForkJoinPool，另一部分是分治任务ForkJoinTask。这两部分的关系类似于ThreadPoolExecutor和 Runnable的关系，都可以理解为提交任务到线程池，只不过分治任务有自己独特类型ForkJoinTask .</p>
+</blockquote>
+<ul>
+<li><p>java.util.concurrent.ForkJoinTask抽象类</p>
+<ol>
+<li>最核心的是fork()方法（异步地执行一个任务）和join()方法 （阻塞当前线程获取执行结果）</li>
+<li>有两个子类（抽象类）—— RecursiveAction（compute ()方法没有返回值）和RecursiveTask （compute ()方法有返回值）</li>
+<li>ForkJoinPool是核心组件，也是生产者-消费者模式。更加高级的是当有空闲的线程，会任务窃取忙于的线程（双端队列）</li>
+</ol>
+</li>
+<li><p>斐波那契数列：Fork/Join实现</p>
+</li>
+<li><pre><code class="java"><span class="keyword">package</span> concurrent._26;
+
+<span class="keyword">import</span> java.util.concurrent.ForkJoinPool;
+<span class="keyword">import</span> java.util.concurrent.RecursiveTask;
+
+<span class="comment">/**</span>
+<span class="comment"> * 描述:</span>
+<span class="comment"> * 使用Fork/join分治框架实现斐波那契数列</span>
+<span class="comment"> *</span>
+<span class="comment"> * <span class="doctag">@author</span> Noah</span>
+<span class="comment"> * <span class="doctag">@create</span> 2019-10-22 09:11</span>
+<span class="comment"> */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">_26_forkJoin_Fibonacci</span> </span>{
+    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>{
+
+        ForkJoinPool forkJoinPool = <span class="keyword">new</span> ForkJoinPool(<span class="number">4</span>);
+
+        Fibonacci fib = <span class="keyword">new</span> Fibonacci(<span class="number">4</span>);
+        Integer r = forkJoinPool.invoke(fib);
+        System.out.println(<span class="string">"r="</span> + r);
+
+    }
+
+}
+
+<span class="comment">/**</span>
+<span class="comment"> * 分治递归任务</span>
+<span class="comment"> */</span>
+<span class="class"><span class="keyword">class</span> <span class="title">Fibonacci</span> <span class="keyword">extends</span> <span class="title">RecursiveTask</span>&lt;<span class="title">Integer</span>&gt; </span>{
+
+    <span class="keyword">final</span> <span class="keyword">int</span> n;
+
+    <span class="function"><span class="keyword">public</span> <span class="title">Fibonacci</span><span class="params">(<span class="keyword">int</span> n)</span> </span>{
+        <span class="keyword">this</span>.n = n;
+    }
+
+    <span class="meta">@Override</span>
+    <span class="function"><span class="keyword">protected</span> Integer <span class="title">compute</span><span class="params">()</span> </span>{
+
+        <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) {
+            <span class="keyword">return</span> n;
+        }
+
+        Fibonacci f1 = <span class="keyword">new</span> Fibonacci(n - <span class="number">1</span>);
+        f1.fork();
+        Fibonacci f2 = <span class="keyword">new</span> Fibonacci(n - <span class="number">2</span>);
+
+        <span class="keyword">return</span> f2.compute() + f1.join();
+    }
+}
+
+&lt;!--￼<span class="number">11</span>--&gt;
+</code></pre>
+</li>
+</ul>
+<h3 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h3><p>Fork/Join并行计算框架主要解决的是分治任务，分治的核心思想是“分而治之”，Fork/Join看作单机版的MapReduce。 </p>
+<p>Fork/Join并行计算框架的核心组件是ForkJoinPool。ForkJoinPool支持任务窃取机制。建议用不同的ForkJoinPool执行不同类型的计算任务。 </p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" target="_blank" rel="noopener">Noah Pan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2019/09/22/2019-09-22-java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E2%91%A1-%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB/">http://yoursite.com/2019/09/22/2019-09-22-java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E2%91%A1-%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com">Noah</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java%E5%B9%B6%E5%8F%91/">Java并发    </a></div><div class="post_share"><div class="social-share" data-image="https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/wechat.jpg"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/alipay.jpg"><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2019/09/22/2019-09-22-java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E2%91%A0-%E5%B9%B6%E5%8F%91%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80/"><img class="prev_cover lazyload" data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>Java并发编程实战①-并发理论基础</span></div></a></div><div class="next-post pull_right"><a href="/2019/09/09/2019-09-09-spring%E4%B8%8Eboot%E6%BA%90%E7%A0%81%E2%91%A3-mvc%E6%A0%B8%E5%BF%83/"><img class="next_cover lazyload" data-src="https://tva1.sinaimg.cn/large/006y8mN6ly1g97ph0biawj31c00u04qp.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>Spring与boot源码④-MVC核心</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/09/22/2019-09-22-java并发编程实战①-并发理论基础/" title="Java并发编程实战①-并发理论基础"><img class="relatedPosts_cover lazyload"data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg"><div class="relatedPosts_title">Java并发编程实战①-并发理论基础</div></a></div><div class="relatedPosts_item"><a href="/2019/11/21/2019-10-17-java并发编程实战④-实战分析/" title="Java并发编程实战④-实战分析"><img class="relatedPosts_cover lazyload"data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg"><div class="relatedPosts_title">Java并发编程实战④-实战分析</div></a></div><div class="relatedPosts_item"><a href="/2019/10/17/2019-10-17-java并发编程实战③-并发设计模式/" title="Java并发编程实战③-并发设计模式"><img class="relatedPosts_cover lazyload"data-src="https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg"><div class="relatedPosts_title">Java并发编程实战③-并发设计模式</div></a></div></div><div class="clear_both"></div></div></div></div><footer id="footer" style="background-image: url(https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg)"><div id="footer-wrap"><div class="copyright">&copy;2017 - 2019 By Noah Pan</div><div class="footer_custom_text">Hi,to contact me <a href="#">Noah</a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script id="ribbon_piao" mobile="false" src="/js/third-party/piao.js"></script><script id="canvas_nest" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="/js/third-party/canvas-nest.js"></script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+</script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script></body></html>
