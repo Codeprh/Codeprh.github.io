@@ -1,0 +1,404 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>Linux性能优化实战 | Noah</title><meta name="description" content="Linux"><meta name="keywords" content="Linux"><meta name="author" content="Noah Pan"><meta name="copyright" content="Noah Pan"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="https://tva1.sinaimg.cn/large/006y8mN6ly1g97xocyw0bj300g00g0s2.jpg"><link rel="preconnect" href="//cdn.jsdelivr.net"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Linux性能优化实战"><meta name="twitter:description" content="Linux"><meta name="twitter:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gi0eiybvppj318n0p3wfi.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Linux性能优化实战"><meta property="og:url" content="http://yoursite.com/2020/03/21/2020-03-21-Linux%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/"><meta property="og:site_name" content="Noah"><meta property="og:description" content="Linux"><meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gi0eiybvppj318n0p3wfi.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="canonical" href="http://yoursite.com/2020/03/21/2020-03-21-Linux%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/"><link rel="prev" title="Noah最佳实践与踩坑" href="http://yoursite.com/2020/04/12/2020-04-12-Noah%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B8%8E%E8%B8%A9%E5%9D%91/"><link rel="next" title="剑指Offer（完整版）" href="http://yoursite.com/2020/02/23/2020-02-23-%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%AE%8C%E6%95%B4%E7%89%88%EF%BC%89/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'true',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  copyright: undefined,
+  copy_copyright_js: false,
+  ClickShowText: undefined,
+  medium_zoom: 'true',
+  Snackbar: undefined
+  
+}</script></head><body><div id="header"> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">Noah</a></span><i class="fa fa-bars fa-fw toggle-menu pull_right close" aria-hidden="true"></i><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 收藏夹</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 更多</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 电影</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"></span></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="lazyload avatar_img" src="https://tva1.sinaimg.cn/large/006y8mN6gy1g95i8yiaddj30sg0sgdgm.jpg" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item is_center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">31</div></a></div></div><div class="mobile_data_item is_center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">14</div></a></div></div><div class="mobile_data_item is_center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">15</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 收藏夹</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于我</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 更多</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 电影</span></a></li></ul></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#Linux性能优化实战"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">Linux性能优化实战</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#总览"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">总览</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#Linux常用命令"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">Linux常用命令</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#基础篇：到底应该怎么理解“平均负载”？"><span class="toc_mobile_items-number">4.</span> <span class="toc_mobile_items-text">基础篇：到底应该怎么理解“平均负载”？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Linux命令解释"><span class="toc_mobile_items-number">4.1.</span> <span class="toc_mobile_items-text">Linux命令解释</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#什么是平均负载？"><span class="toc_mobile_items-number">4.2.</span> <span class="toc_mobile_items-text">什么是平均负载？</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#平均负载多少才合理"><span class="toc_mobile_items-number">4.3.</span> <span class="toc_mobile_items-text">平均负载多少才合理</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#安装stress、sysstat"><span class="toc_mobile_items-number">4.4.</span> <span class="toc_mobile_items-text">安装stress、sysstat</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#平均负载实验"><span class="toc_mobile_items-number">4.5.</span> <span class="toc_mobile_items-text">平均负载实验</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#CPU密集型进程"><span class="toc_mobile_items-number">4.5.1.</span> <span class="toc_mobile_items-text">CPU密集型进程</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#I-O密集型进程"><span class="toc_mobile_items-number">4.5.2.</span> <span class="toc_mobile_items-text">I/O密集型进程</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#大量进程"><span class="toc_mobile_items-number">4.5.3.</span> <span class="toc_mobile_items-text">大量进程</span></a></li></ol></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#基础篇：经常说的-CPU-上下文切换是什么意思？（上）"><span class="toc_mobile_items-number">5.</span> <span class="toc_mobile_items-text">基础篇：经常说的 CPU 上下文切换是什么意思？（上）</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CPU上下文"><span class="toc_mobile_items-number">5.1.</span> <span class="toc_mobile_items-text">CPU上下文</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#进程上下文切换"><span class="toc_mobile_items-number">5.2.</span> <span class="toc_mobile_items-text">进程上下文切换</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#线程上下文切换"><span class="toc_mobile_items-number">5.3.</span> <span class="toc_mobile_items-text">线程上下文切换</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#中断上下文切换"><span class="toc_mobile_items-number">5.4.</span> <span class="toc_mobile_items-text">中断上下文切换</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#基础篇：经常说的CPU上下文切换是什么意思（下）"><span class="toc_mobile_items-number">6.</span> <span class="toc_mobile_items-text">基础篇：经常说的CPU上下文切换是什么意思（下）</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Linux命令解释-1"><span class="toc_mobile_items-number">6.1.</span> <span class="toc_mobile_items-text">Linux命令解释</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#vmstat使用"><span class="toc_mobile_items-number">6.2.</span> <span class="toc_mobile_items-text">vmstat使用</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#上下文切换实验"><span class="toc_mobile_items-number">6.3.</span> <span class="toc_mobile_items-text">上下文切换实验</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#sysbench命令"><span class="toc_mobile_items-number">6.3.1.</span> <span class="toc_mobile_items-text">sysbench命令</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#每秒上下文切换多少次才算正常呢？"><span class="toc_mobile_items-number">6.3.2.</span> <span class="toc_mobile_items-text">每秒上下文切换多少次才算正常呢？</span></a></li></ol></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#基础篇：某个应用的CPU使用率居然达到100-，我该怎么办"><span class="toc_mobile_items-number">7.</span> <span class="toc_mobile_items-text">基础篇：某个应用的CPU使用率居然达到100%，我该怎么办</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Linux命令解释-2"><span class="toc_mobile_items-number">7.1.</span> <span class="toc_mobile_items-text">Linux命令解释</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CPU使用率"><span class="toc_mobile_items-number">7.2.</span> <span class="toc_mobile_items-text">CPU使用率</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#cpu专业名词指标"><span class="toc_mobile_items-number">7.3.</span> <span class="toc_mobile_items-text">cpu专业名词指标</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CPU使用率过高怎么办？（哪个函数导致的）"><span class="toc_mobile_items-number">7.4.</span> <span class="toc_mobile_items-text">CPU使用率过高怎么办？（哪个函数导致的）</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#找到CPU利用率100-的函数"><span class="toc_mobile_items-number">7.5.</span> <span class="toc_mobile_items-text">找到CPU利用率100%的函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Centos7-perf无法查看调用链函数名称"><span class="toc_mobile_items-number">7.5.1.</span> <span class="toc_mobile_items-text">Centos7 perf无法查看调用链函数名称</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#小结"><span class="toc_mobile_items-number">7.6.</span> <span class="toc_mobile_items-text">小结</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用"><span class="toc_mobile_items-number">8.</span> <span class="toc_mobile_items-text">案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Linux命令解释-3"><span class="toc_mobile_items-number">8.1.</span> <span class="toc_mobile_items-text">Linux命令解释</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#高CPU无法找到进程实验"><span class="toc_mobile_items-number">8.2.</span> <span class="toc_mobile_items-text">高CPU无法找到进程实验</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#套路篇：如何迅速分析出系统CPU的瓶颈在哪里？"><span class="toc_mobile_items-number">9.</span> <span class="toc_mobile_items-text">套路篇：如何迅速分析出系统CPU的瓶颈在哪里？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CPU性能指标"><span class="toc_mobile_items-number">9.1.</span> <span class="toc_mobile_items-text">CPU性能指标</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#性能工具"><span class="toc_mobile_items-number">9.2.</span> <span class="toc_mobile_items-text">性能工具</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#如何迅速分析CPU的性能瓶颈"><span class="toc_mobile_items-number">9.3.</span> <span class="toc_mobile_items-text">如何迅速分析CPU的性能瓶颈</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#套路篇：如何“快准狠”找到系统内存的问题"><span class="toc_mobile_items-number">10.</span> <span class="toc_mobile_items-text">套路篇：如何“快准狠”找到系统内存的问题</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#内存性能指标"><span class="toc_mobile_items-number">10.1.</span> <span class="toc_mobile_items-text">内存性能指标</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#性能工具-1"><span class="toc_mobile_items-number">10.2.</span> <span class="toc_mobile_items-text">性能工具</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#如何迅速分析内存的性能瓶颈"><span class="toc_mobile_items-number">10.3.</span> <span class="toc_mobile_items-text">如何迅速分析内存的性能瓶颈</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#套路篇：如何迅速分析出系统IO的瓶颈在哪里？"><span class="toc_mobile_items-number">11.</span> <span class="toc_mobile_items-text">套路篇：如何迅速分析出系统IO的瓶颈在哪里？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#性能指标"><span class="toc_mobile_items-number">11.1.</span> <span class="toc_mobile_items-text">性能指标</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#文件系统I-O性能指标"><span class="toc_mobile_items-number">11.2.</span> <span class="toc_mobile_items-text">文件系统I/O性能指标</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#磁盘I-O性能指标"><span class="toc_mobile_items-number">11.3.</span> <span class="toc_mobile_items-text">磁盘I/O性能指标</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#性能工具-2"><span class="toc_mobile_items-number">11.4.</span> <span class="toc_mobile_items-text">性能工具</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#如何迅速分析I-O的性能瓶颈"><span class="toc_mobile_items-number">11.5.</span> <span class="toc_mobile_items-text">如何迅速分析I/O的性能瓶颈</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#TODO-套路篇：磁盘-IO-性能优化的几个思路"><span class="toc_mobile_items-number">12.</span> <span class="toc_mobile_items-text">TODO:套路篇：磁盘 IO 性能优化的几个思路</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#套路篇：网络性能优化的几个思路（上）"><span class="toc_mobile_items-number">13.</span> <span class="toc_mobile_items-text">套路篇：网络性能优化的几个思路（上）</span></a></li></ol></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux性能优化实战"><span class="toc-number">1.</span> <span class="toc-text">Linux性能优化实战</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总览"><span class="toc-number">2.</span> <span class="toc-text">总览</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux常用命令"><span class="toc-number">3.</span> <span class="toc-text">Linux常用命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#基础篇：到底应该怎么理解“平均负载”？"><span class="toc-number">4.</span> <span class="toc-text">基础篇：到底应该怎么理解“平均负载”？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux命令解释"><span class="toc-number">4.1.</span> <span class="toc-text">Linux命令解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是平均负载？"><span class="toc-number">4.2.</span> <span class="toc-text">什么是平均负载？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平均负载多少才合理"><span class="toc-number">4.3.</span> <span class="toc-text">平均负载多少才合理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装stress、sysstat"><span class="toc-number">4.4.</span> <span class="toc-text">安装stress、sysstat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平均负载实验"><span class="toc-number">4.5.</span> <span class="toc-text">平均负载实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU密集型进程"><span class="toc-number">4.5.1.</span> <span class="toc-text">CPU密集型进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#I-O密集型进程"><span class="toc-number">4.5.2.</span> <span class="toc-text">I/O密集型进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#大量进程"><span class="toc-number">4.5.3.</span> <span class="toc-text">大量进程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#基础篇：经常说的-CPU-上下文切换是什么意思？（上）"><span class="toc-number">5.</span> <span class="toc-text">基础篇：经常说的 CPU 上下文切换是什么意思？（上）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU上下文"><span class="toc-number">5.1.</span> <span class="toc-text">CPU上下文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程上下文切换"><span class="toc-number">5.2.</span> <span class="toc-text">进程上下文切换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程上下文切换"><span class="toc-number">5.3.</span> <span class="toc-text">线程上下文切换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中断上下文切换"><span class="toc-number">5.4.</span> <span class="toc-text">中断上下文切换</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#基础篇：经常说的CPU上下文切换是什么意思（下）"><span class="toc-number">6.</span> <span class="toc-text">基础篇：经常说的CPU上下文切换是什么意思（下）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux命令解释-1"><span class="toc-number">6.1.</span> <span class="toc-text">Linux命令解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vmstat使用"><span class="toc-number">6.2.</span> <span class="toc-text">vmstat使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#上下文切换实验"><span class="toc-number">6.3.</span> <span class="toc-text">上下文切换实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sysbench命令"><span class="toc-number">6.3.1.</span> <span class="toc-text">sysbench命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#每秒上下文切换多少次才算正常呢？"><span class="toc-number">6.3.2.</span> <span class="toc-text">每秒上下文切换多少次才算正常呢？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#基础篇：某个应用的CPU使用率居然达到100-，我该怎么办"><span class="toc-number">7.</span> <span class="toc-text">基础篇：某个应用的CPU使用率居然达到100%，我该怎么办</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux命令解释-2"><span class="toc-number">7.1.</span> <span class="toc-text">Linux命令解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU使用率"><span class="toc-number">7.2.</span> <span class="toc-text">CPU使用率</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpu专业名词指标"><span class="toc-number">7.3.</span> <span class="toc-text">cpu专业名词指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU使用率过高怎么办？（哪个函数导致的）"><span class="toc-number">7.4.</span> <span class="toc-text">CPU使用率过高怎么办？（哪个函数导致的）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#找到CPU利用率100-的函数"><span class="toc-number">7.5.</span> <span class="toc-text">找到CPU利用率100%的函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Centos7-perf无法查看调用链函数名称"><span class="toc-number">7.5.1.</span> <span class="toc-text">Centos7 perf无法查看调用链函数名称</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">7.6.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用"><span class="toc-number">8.</span> <span class="toc-text">案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux命令解释-3"><span class="toc-number">8.1.</span> <span class="toc-text">Linux命令解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高CPU无法找到进程实验"><span class="toc-number">8.2.</span> <span class="toc-text">高CPU无法找到进程实验</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#套路篇：如何迅速分析出系统CPU的瓶颈在哪里？"><span class="toc-number">9.</span> <span class="toc-text">套路篇：如何迅速分析出系统CPU的瓶颈在哪里？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU性能指标"><span class="toc-number">9.1.</span> <span class="toc-text">CPU性能指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能工具"><span class="toc-number">9.2.</span> <span class="toc-text">性能工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何迅速分析CPU的性能瓶颈"><span class="toc-number">9.3.</span> <span class="toc-text">如何迅速分析CPU的性能瓶颈</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#套路篇：如何“快准狠”找到系统内存的问题"><span class="toc-number">10.</span> <span class="toc-text">套路篇：如何“快准狠”找到系统内存的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#内存性能指标"><span class="toc-number">10.1.</span> <span class="toc-text">内存性能指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能工具-1"><span class="toc-number">10.2.</span> <span class="toc-text">性能工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何迅速分析内存的性能瓶颈"><span class="toc-number">10.3.</span> <span class="toc-text">如何迅速分析内存的性能瓶颈</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#套路篇：如何迅速分析出系统IO的瓶颈在哪里？"><span class="toc-number">11.</span> <span class="toc-text">套路篇：如何迅速分析出系统IO的瓶颈在哪里？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#性能指标"><span class="toc-number">11.1.</span> <span class="toc-text">性能指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件系统I-O性能指标"><span class="toc-number">11.2.</span> <span class="toc-text">文件系统I/O性能指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘I-O性能指标"><span class="toc-number">11.3.</span> <span class="toc-text">磁盘I/O性能指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能工具-2"><span class="toc-number">11.4.</span> <span class="toc-text">性能工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何迅速分析I-O的性能瓶颈"><span class="toc-number">11.5.</span> <span class="toc-text">如何迅速分析I/O的性能瓶颈</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TODO-套路篇：磁盘-IO-性能优化的几个思路"><span class="toc-number">12.</span> <span class="toc-text">TODO:套路篇：磁盘 IO 性能优化的几个思路</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#套路篇：网络性能优化的几个思路（上）"><span class="toc-number">13.</span> <span class="toc-text">套路篇：网络性能优化的几个思路（上）</span></a></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg)"><div id="post-info"><div id="post-title"><div class="posttitle">Linux性能优化实战</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2020-03-21<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-08-23</time><span class="post-meta__separator mobile_hidden">|</span><span class="mobile_hidden"><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Linux/">Linux</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon" aria-hidden="true"></i><span>字数总计: </span><span class="word-count">7.2k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon" aria-hidden="true"></i><span>阅读时长: 23 分钟</span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><h1 id="Linux性能优化实战"><a href="#Linux性能优化实战" class="headerlink" title="Linux性能优化实战"></a>Linux性能优化实战</h1><p>[TOC]</p>
+<h1 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h1><blockquote>
+<ol>
+<li>基础篇：到底应该怎么理解“平均负载”？</li>
+<li>基础篇：经常说的 CPU 上下文切换是什么意思？（上）</li>
+<li>基础篇：经常说的 CPU 上下文切换是什么意思？（下）</li>
+<li>基础篇：某个应用的CPU使用率居然达到100%，我该怎么办？</li>
+<li>案例篇：系统的 CPU 使用率很高，但为啥却找不到高 CPU 的应用？</li>
+<li>案例篇：系统中出现大量不可中断进程和僵尸进程怎么办？（上）</li>
+<li>案例篇：系统中出现大量不可中断进程和僵尸进程怎么办？（下）</li>
+<li>基础篇：怎么理解Linux软中断？</li>
+<li>案例篇：系统的软中断CPU使用率升高，我该怎么办？</li>
+<li>套路篇：如何迅速分析出系统CPU的瓶颈在哪里？</li>
+<li>套路篇：CPU 性能优化的几个思路</li>
+<li>Linux 性能优化答疑（一）</li>
+<li>Linux 性能优化答疑（二）</li>
+<li>基础篇：Linux内存是怎么工作的？</li>
+<li>基础篇：怎么理解内存中的Buffer和Cache？</li>
+<li>案例篇：如何利用系统缓存优化程序的运行效率？</li>
+<li>案例篇：内存泄漏了，我该如何定位和处理？</li>
+<li>案例篇：为什么系统的Swap变高了（上）</li>
+<li>案例篇：为什么系统的Swap变高了？（下）</li>
+<li>套路篇：如何“快准狠”找到系统内存的问题？</li>
+<li>Linux 性能优化答疑（三）</li>
+<li>基础篇：Linux文件系统是怎么工作的？</li>
+<li>基础篇：Linux 磁盘IO是怎么工作的(上)</li>
+<li>基础篇：Linux 磁盘IO是怎么工作的（下）</li>
+<li>案例篇：如何找出狂打日志的“内鬼”？</li>
+<li>案例篇：为什么我的磁盘IO延迟很高？</li>
+<li>案例篇：一个SQL查询要15秒，这是怎么回事？</li>
+<li>案例篇：Redis响应严重延迟，如何解决？</li>
+<li>套路篇：如何迅速分析出系统IO的瓶颈在哪里？</li>
+<li>套路篇：磁盘 IO 性能优化的几个思路</li>
+<li>Linux 性能优化答疑（四）</li>
+<li>关于 Linux 网络，你必须知道这些（上）</li>
+<li>关于 Linux 网络，你必须知道这些（下）</li>
+<li>基础篇：C10K 和 C1000K 回顾</li>
+<li>套路篇：怎么评估系统的网络性能？</li>
+<li>案例篇：DNS 解析时快时慢，我该怎么办？</li>
+<li>案例篇：怎么使用 tcpdump 和 Wireshark 分析网络流量？</li>
+<li>案例篇：怎么缓解 DDoS 攻击带来的性能下降问题？</li>
+<li>案例篇：网络请求延迟变大了，我该怎么办？</li>
+<li>案例篇：如何优化 NAT 性能？（上）</li>
+<li>案例篇：如何优化 NAT 性能？（下）</li>
+<li>套路篇：网络性能优化的几个思路（上）</li>
+<li>套路篇：网络性能优化的几个思路（下）</li>
+<li>Linux 性能优化答疑（五）</li>
+<li>案例篇：为什么应用容器化后，启动慢了很多？</li>
+<li>案例篇：服务器总是时不时丢包，我该怎么办？</li>
+<li>案例篇：服务器总是时不时丢包，我该怎么办？（下）</li>
+<li>案例篇：内核线程 CPU 利用率太高，我该怎么办？</li>
+<li>案例篇：动态追踪怎么用？（上）</li>
+<li>案例篇：动态追踪怎么用？（下）</li>
+<li>案例篇：服务吞吐量下降很厉害，怎么分析？</li>
+<li>套路篇：系统监控的综合思路</li>
+<li>套路篇：应用监控的一般思路</li>
+<li>套路篇：分析性能问题的一般步骤</li>
+<li>套路篇：优化性能问题的一般方法</li>
+<li>套路篇：Linux 性能工具速查</li>
+<li>答疑（六）：容器冷启动如何性能分析？_极客时</li>
+</ol>
+</blockquote>
+<h1 id="Linux常用命令"><a href="#Linux常用命令" class="headerlink" title="Linux常用命令"></a>Linux常用命令</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 服务器时间同步</span></span><br><span class="line">yum -y install ntpdate</span><br><span class="line">ntpdate -u  pool.ntp.org</span><br><span class="line">date</span><br><span class="line"><span class="meta">#</span><span class="bash">yum更新和升级</span></span><br><span class="line">yum -y update &amp;&amp; yum -y upgrade</span><br></pre></td></tr></table></figure>
+
+<h1 id="基础篇：到底应该怎么理解“平均负载”？"><a href="#基础篇：到底应该怎么理解“平均负载”？" class="headerlink" title="基础篇：到底应该怎么理解“平均负载”？"></a>基础篇：到底应该怎么理解“平均负载”？</h1><h2 id="Linux命令解释"><a href="#Linux命令解释" class="headerlink" title="Linux命令解释"></a>Linux命令解释</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">过去一分钟、五分钟、15分钟的平均负载</span></span><br><span class="line">uptime</span><br><span class="line">top</span><br><span class="line"><span class="meta">#</span><span class="bash">查看系统cpu个数</span></span><br><span class="line">grep 'model name' /proc/cpuinfo | wc -l</span><br><span class="line"><span class="meta">#</span><span class="bash"> centos 更新软件包</span></span><br><span class="line">yum -y install epel-release</span><br><span class="line">yum -y install sysstat</span><br><span class="line">yum -y install stress</span><br></pre></td></tr></table></figure>
+
+<h2 id="什么是平均负载？"><a href="#什么是平均负载？" class="headerlink" title="什么是平均负载？"></a>什么是平均负载？</h2><ul>
+<li>平均负载是指单位时间内，系统处于<strong>可运行状态</strong>和<strong>不可中断状态</strong>的平均进程数，也就是<strong>平均活跃进程数</strong>。<ul>
+<li>可运行状态：是指正在使用CPU或者正在等待CPU的进程，R状态</li>
+<li>不可中断状态：正处于内核态关键流程中的进程，并且这些流程是不可打断的，比如最常见的是等待硬件设备的I/O响应，D状态</li>
+</ul>
+</li>
+</ul>
+<h2 id="平均负载多少才合理"><a href="#平均负载多少才合理" class="headerlink" title="平均负载多少才合理"></a>平均负载多少才合理</h2><ul>
+<li>如何理解uptime输出结果？<ul>
+<li>假设我们在一个单 CPU 系统上看到平均负载为 1.73，0.60，7.98，那么说明在过去 1 分钟内，系统有 73% 的超载，而在 15 分钟内，有 698% 的超载，从整体趋势来看，系统的负载在降低。</li>
+</ul>
+</li>
+<li><strong>当平均负载高于 CPU 数量70%的时候</strong>，你就应该分析排查负载高的问题了。</li>
+<li>平均负载与CPU使用率是什么关系？<ol>
+<li>CPU 密集型进程，使用大量 CPU 会导致平均负载升高，此时这两者是一致的；</li>
+<li>I/O 密集型进程，等待 I/O 也会导致平均负载升高，但 CPU 使用率不一定很高；</li>
+<li>大量等待 CPU 的进程调度也会导致平均负载升高，此时的CPU使用率也会比较高。</li>
+</ol>
+</li>
+</ul>
+<h2 id="安装stress、sysstat"><a href="#安装stress、sysstat" class="headerlink" title="安装stress、sysstat"></a>安装stress、sysstat</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">更新yum 安装包</span></span><br><span class="line">yum -y install epel-release</span><br><span class="line"></span><br><span class="line">yum -y install sysstat</span><br><span class="line">yum -y install stress</span><br><span class="line"></span><br><span class="line">wget -c http://pagesperso-orange.fr/sebastien.godard/sysstat-11.7.3-1.x86_64.rpm</span><br><span class="line">sudo rpm -Uvh sysstat-11.7.3-1.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>stress 是一个 Linux 系统压力测试工具，这里我们用作异常进程模拟平均负载升高的场景。</li>
+<li>而 sysstat 包含了常用的 Linux 性能工具，用来监控和分析系统的性能。我们的案例会用到这个包的两个命令 mpstat 和 pidstat。<ul>
+<li>mpstat 是一个常用的多核 CPU 性能分析工具，用来实时查看每个 CPU 的性能指标，以及所有CPU的平均指标。</li>
+<li>pidstat 是一个常用的进程性能分析工具，用来实时查看进程的 CPU、内存、I/O 以及上下文切换等性能指标。</li>
+</ul>
+</li>
+</ul>
+<h2 id="平均负载实验"><a href="#平均负载实验" class="headerlink" title="平均负载实验"></a>平均负载实验</h2><h3 id="CPU密集型进程"><a href="#CPU密集型进程" class="headerlink" title="CPU密集型进程"></a>CPU密集型进程</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">模拟一个 CPU 使用率 100% 的场景</span></span><br><span class="line">stress --cpu 1 --timeout 600</span><br><span class="line"><span class="meta">#</span><span class="bash">查看平均负载的变化情况,-d 参数表示高亮显示变化的区域</span></span><br><span class="line">watch -d uptime</span><br><span class="line"><span class="meta">#</span><span class="bash">mpstat查看 CPU 使用率的变化情况.-P ALL 表示监控所有CPU，后面数字5表示间隔5秒后输出一组数据</span></span><br><span class="line">mpstat -P ALL 5</span><br><span class="line"><span class="meta">#</span><span class="bash">pidstat查询哪个进程cpu使用率100%，间隔5秒后输出一组数据</span></span><br><span class="line">pidstat -u 5 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="I-O密集型进程"><a href="#I-O密集型进程" class="headerlink" title="I/O密集型进程"></a>I/O密集型进程</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">模拟I/O压力</span></span><br><span class="line">stress -i 1 --timeout 600</span><br><span class="line">yum -y install stress-ng</span><br><span class="line">stress-ng -i 1 --hdd 1 --timeout 600</span><br><span class="line"><span class="meta">#</span><span class="bash">显示所有CPU的指标，并在间隔5秒输出一组数据</span></span><br><span class="line">mpstat -P ALL 5 1</span><br><span class="line"><span class="meta">#</span><span class="bash">间隔5秒后输出一组数据，-u表示CPU指标</span></span><br><span class="line">pidstat -u 5 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="大量进程"><a href="#大量进程" class="headerlink" title="大量进程"></a>大量进程</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">模拟的是 8 个进程</span></span><br><span class="line">stress -c 8 --timeout 600</span><br><span class="line">uptime</span><br><span class="line">pidstat -u 5 1</span><br></pre></td></tr></table></figure>
+
+<h1 id="基础篇：经常说的-CPU-上下文切换是什么意思？（上）"><a href="#基础篇：经常说的-CPU-上下文切换是什么意思？（上）" class="headerlink" title="基础篇：经常说的 CPU 上下文切换是什么意思？（上）"></a>基础篇：经常说的 CPU 上下文切换是什么意思？（上）</h1><h2 id="CPU上下文"><a href="#CPU上下文" class="headerlink" title="CPU上下文"></a>CPU上下文</h2><ul>
+<li>cpu执行任务，需要先设置好cpu寄存器和程序计数器。<ul>
+<li>任务：进程、线程、硬件通过触发信号，会导致中断处理程序的调用</li>
+</ul>
+</li>
+<li>cup上下文切换，就是保存上一个任务的cpu寄存器和程序计数器。<ul>
+<li>根据任务的不同，CPU 的上下文切换就可以分为几个不同的场景，也就是<strong>进程上下文切换</strong>、<strong>线程上下文切换</strong>以及<strong>中断上下文切换</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="进程上下文切换"><a href="#进程上下文切换" class="headerlink" title="进程上下文切换"></a>进程上下文切换</h2><ul>
+<li>Linux按照特权，把进程的运行空间分为内核空间和用户空间。<ul>
+<li>内核空间（Ring 0）具有最高权限，可以直接访问所有资源；</li>
+<li>用户空间（Ring 3）只能访问受限资源，不能直接访问内存等硬件设备，必须通过系统调用陷入到内核中，才能访问这些特权资源。</li>
+</ul>
+</li>
+<li>换个角度看，也就是说，进程既可以在用户空间运行，又可以在内核空间中运行。进程在用户空间运行时，被称为进程的用户态，而陷入内核空间的时候，被称为进程的内核态。（用户态-&gt;内核态，系统调用，发生了二次cpu上下文切换）<ul>
+<li><strong>系统调用过程通常称为特权模式切换，而不是上下文切换</strong>。（同一个进程内）</li>
+</ul>
+</li>
+<li>进程切换场景<ol>
+<li>为了保证所有进程可以得到公平调度，CPU时间被划分为一段段的时间片，这些时间片再被轮流分配给各个进程。这样，当某个进程的时间片耗尽了，就会被系统挂起，切换到其它正在等待 CPU 的进程运行。</li>
+<li>进程在系统资源不足（比如内存不足）时，要等到资源满足后才可以运行，这个时候进程也会被挂起，并由系统调度其他进程运行。</li>
+<li>当进程通过睡眠函数 sleep 这样的方法将自己主动挂起时，自然也会重新调度。</li>
+<li>当有优先级更高的进程运行时，为了保证高优先级进程的运行，当前进程会被挂起，由高优先级进程来运行。</li>
+<li>发生硬件中断时，CPU上的进程会被中断挂起，转而执行内核中的中断服务程序。</li>
+</ol>
+</li>
+<li>Linux 通过 TLB（Translation Lookaside Buffer）来管理虚拟内存到物理内存的映射关系。当虚拟内存更新后，TLB 也需要刷新。</li>
+</ul>
+<h2 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h2><ul>
+<li><strong>线程是调度的基本单位，而进程则是资源拥有的基本单位</strong></li>
+<li>同一个进程，这些线程会共享相同的虚拟内存和全局变量等资源。这些资源在上下文切换时是不需要修改的。</li>
+</ul>
+<h2 id="中断上下文切换"><a href="#中断上下文切换" class="headerlink" title="中断上下文切换"></a>中断上下文切换</h2><ul>
+<li>为了快速响应硬件的事件，<strong>中断处理会打断进程的正常调度和执行</strong>，转而调用中断处理程序，响应设备事件。</li>
+<li><strong>对同一个 CPU 来说，中断处理比进程拥有更高的优先级</strong>，所以中断上下文切换并不会与进程上下文切换同时发生。</li>
+</ul>
+<h1 id="基础篇：经常说的CPU上下文切换是什么意思（下）"><a href="#基础篇：经常说的CPU上下文切换是什么意思（下）" class="headerlink" title="基础篇：经常说的CPU上下文切换是什么意思（下）"></a>基础篇：经常说的CPU上下文切换是什么意思（下）</h1><h2 id="Linux命令解释-1"><a href="#Linux命令解释-1" class="headerlink" title="Linux命令解释"></a>Linux命令解释</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">每隔5秒输出1组数据,查看内存和cpu上下文切换次数与中断次数</span></span><br><span class="line">vmstat 5</span><br><span class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----</span><br><span class="line"> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st</span><br><span class="line"> 1  0      0 2711760   4136 922616    0    0     1   428   58   48  0  0 100  0  0</span><br><span class="line"> 0  0      0 2711752   4136 922648    0    0     0     0   45   51  0  0 100  0  0</span><br><span class="line"> 0  0      0 2711784   4136 922648    0    0     0     0   47   53  0  0 100  0  0</span><br><span class="line"> 0  0      0 2711784   4136 922648    0    0     0     0   39   45  0  0 100  0  0</span><br><span class="line"> 0  0      0 2711784   4136 922648    0    0     0     0   44   48  0  0 100  0  0</span><br><span class="line"> 0  0      0 2711784   4136 922648    0    0     0     0   51   51  0  0 100  0  0</span><br><span class="line"><span class="meta">#</span><span class="bash">查看每个进程上下文切换情况 pidstat -w</span></span><br><span class="line">pidstat -w 5</span><br><span class="line">平均时间:   UID       PID   cswch/s nvcswch/s  Command</span><br><span class="line">平均时间:     0         9      9.08      0.00  rcu_sched</span><br><span class="line">平均时间:     0        11      0.20      0.00  watchdog/0</span><br><span class="line">平均时间:     0        12      0.20      0.00  watchdog/1</span><br><span class="line">平均时间:     0        14      0.10      0.00  ksoftirqd/1</span><br><span class="line">平均时间:     0        38      0.10      0.00  khugepaged</span><br><span class="line">平均时间:     0       512      0.20      0.00  kworker/1:1H</span><br><span class="line"><span class="meta">#</span><span class="bash">以10个线程运行5分钟的基准测试，模拟多线程切换的问题</span></span><br><span class="line">sysbench --threads=10 --max-time=300 threads run</span><br><span class="line"><span class="meta">#</span><span class="bash">-w参数表示输出进程切换指标，而-u参数则表示输出CPU使用指标</span></span><br><span class="line">pidstat -w -u 1</span><br><span class="line">14时22分55秒   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">14时22分56秒     0     35140   54.00  141.00    0.00    0.00  195.00     1  sysbench</span><br><span class="line"><span class="meta">#</span><span class="bash">-wt 参数表示输出线程的上下文切换指标</span></span><br><span class="line">pidstat -wt 1</span><br><span class="line"><span class="meta">#</span><span class="bash">查看内核中断次数</span></span><br><span class="line">watch -d cat /proc/interrupts</span><br></pre></td></tr></table></figure>
+
+<h2 id="vmstat使用"><a href="#vmstat使用" class="headerlink" title="vmstat使用"></a>vmstat使用</h2><ul>
+<li>vmstat 是一个常用的系统性能分析工具，主要用来分析系统的内存使用情况，也常用来分析 CPU 上下文切换和中断的次数。</li>
+<li>(vmstat 5)响应解读<ol>
+<li>cs（context switch）是每秒上下文切换的次数。</li>
+<li>in（interrupt）则是每秒中断的次数。</li>
+<li>r（Running or Runnable）是就绪队列的长度，也就是正在运行和等待CPU的进程数。</li>
+<li>b（Blocked）则是处于不可中断睡眠状态的进程数。</li>
+<li>us：用户cpu使用率</li>
+<li>sy：系统cpu使用率</li>
+</ol>
+</li>
+<li>(pidstat -w 5)响应解读<ol>
+<li>一个是 cswch ，表示每秒自愿上下文切换（voluntary context switches）的次数，另一个则是 nvcswch ，表示每秒非自愿上下文切换（non voluntary context switches）的次数</li>
+<li><strong>自愿上下文切换，是指进程无法获取所需资源，导致的上下文切换</strong>。比如说， I/O、内存等系统资源不足时，就会发生自愿上下文切换。</li>
+<li><strong>非自愿上下文切换，则是指进程由于时间片已到等原因，被系统强制调度，进而发生的上下文切换</strong>。比如说，大量进程都在争抢 CPU 时，就容易发生非自愿上下文切换。</li>
+</ol>
+</li>
+</ul>
+<h2 id="上下文切换实验"><a href="#上下文切换实验" class="headerlink" title="上下文切换实验"></a>上下文切换实验</h2><h3 id="sysbench命令"><a href="#sysbench命令" class="headerlink" title="sysbench命令"></a>sysbench命令</h3><ul>
+<li>sysbench 是一个多线程的基准测试工具，一般用来评估不同系统参数下的数据库负载情况。当然，在这次案例中，我们只把它当成一个异常进程来看，作用是模拟上下文切换过多的问题。</li>
+</ul>
+<h3 id="每秒上下文切换多少次才算正常呢？"><a href="#每秒上下文切换多少次才算正常呢？" class="headerlink" title="每秒上下文切换多少次才算正常呢？"></a>每秒上下文切换多少次才算正常呢？</h3><p><strong>这个数值其实取决于系统本身的 CPU 性能</strong>。在我看来，如果系统的上下文切换次数比较稳定，那么从数百到一万以内，都应该算是正常的。但当上下文切换次数超过一万次，或者切换次数出现数量级的增长时，就很可能已经出现了性能问题。</p>
+<ul>
+<li>自愿上下文切换变多了，说明进程都在等待资源，有可能发生了 I/O 等其他问题；</li>
+<li>非自愿上下文切换变多了，说明进程都在被强制调度，也就是都在争抢 CPU，说明 CPU 的确成了瓶颈；</li>
+<li>中断次数变多了，说明 CPU 被中断处理程序占用，还需要通过查看 /proc/interrupts 文件来分析具体的中断类型。</li>
+</ul>
+<h1 id="基础篇：某个应用的CPU使用率居然达到100-，我该怎么办"><a href="#基础篇：某个应用的CPU使用率居然达到100-，我该怎么办" class="headerlink" title="基础篇：某个应用的CPU使用率居然达到100%，我该怎么办"></a>基础篇：某个应用的CPU使用率居然达到100%，我该怎么办</h1><h2 id="Linux命令解释-2"><a href="#Linux命令解释-2" class="headerlink" title="Linux命令解释"></a>Linux命令解释</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看系统节拍率</span></span><br><span class="line">grep 'CONFIG_HZ=' /boot/config-$(uname -r)</span><br><span class="line"><span class="meta">#</span><span class="bash">查看提供的就是系统的 CPU 和任务统计信息</span></span><br><span class="line">cat /proc/stat | grep ^cpu</span><br><span class="line"><span class="meta">#</span><span class="bash">查看每个进程的cpu使用率</span></span><br><span class="line">cat /proc/[pid]/stat</span><br><span class="line"><span class="meta">#</span><span class="bash">查看占用cpu时间片最多的进程（线程、函数等）</span></span><br><span class="line">perf top</span><br><span class="line"><span class="meta">#</span><span class="bash">离线收集cpu数据，后续分析。 -g</span></span><br><span class="line">perf record </span><br><span class="line">perf report</span><br><span class="line"><span class="meta">#</span><span class="bash">安装apache bench http服务性能测试工具</span></span><br><span class="line">yum -y install httpd-tools</span><br></pre></td></tr></table></figure>
+
+<h2 id="CPU使用率"><a href="#CPU使用率" class="headerlink" title="CPU使用率"></a>CPU使用率</h2><ul>
+<li>cpu怎么划分很短的时间片来执行多任务，通过节拍率，触发时间中断。</li>
+<li>Linux 通过 /proc 虚拟文件系统，向用户空间提供了系统内部状态的信息。</li>
+<li><strong>CPU 使用率，就是除了空闲时间外的其他时间占总 CPU 时间的百分比</strong></li>
+<li><strong>性能分析工具给出的都是间隔一段时间的平均 CPU 使用率，所以要注意间隔时间的设置</strong>，<ul>
+<li>top：间隔3s<ul>
+<li>top 默认显示的是所有 CPU 的平均值，这个时候你只需要按下数字 1 ，就可以切换到每个 CPU 的使用率了</li>
+<li>每个进程都有一个 %CPU 列，表示进程的 CPU 使用率。它是用户态和内核态 CPU 使用率的总和</li>
+</ul>
+</li>
+<li>ps：进程整个生命周期</li>
+</ul>
+</li>
+</ul>
+<h2 id="cpu专业名词指标"><a href="#cpu专业名词指标" class="headerlink" title="cpu专业名词指标"></a>cpu专业名词指标</h2><ul>
+<li>user（通常缩写为 us），代表用户态 CPU 时间。注意，它不包括下面的 nice 时间，但包括了 guest 时间。</li>
+<li>nice（通常缩写为 ni），代表低优先级用户态 CPU 时间，也就是进程的 nice 值被调整为 1-19 之间时的 CPU 时间。这里注意，nice 可取值范围是 -20 到 19，数值越大，优先级反而越低。</li>
+<li>system（通常缩写为sys），代表内核态 CPU 时间。</li>
+<li>idle（通常缩写为id），代表空闲时间。注意，它不包括等待 I/O 的时间（iowait）。</li>
+<li>iowait（通常缩写为 wa），代表等待 I/O 的 CPU 时间。</li>
+<li>irq（通常缩写为 hi），代表处理硬中断的 CPU 时间。</li>
+<li>softirq（通常缩写为 si），代表处理软中断的 CPU 时间。</li>
+<li>steal（通常缩写为 st），代表当系统运行在虚拟机中的时候，被其他虚拟机占用的 CPU 时间。</li>
+<li>guest（通常缩写为 guest），代表通过虚拟化运行其他操作系统的时间，也就是运行虚拟机的 CPU 时间。</li>
+<li>guest_nice（通常缩写为 gnice），代表以低优先级运行虚拟机的时间。</li>
+</ul>
+<h2 id="CPU使用率过高怎么办？（哪个函数导致的）"><a href="#CPU使用率过高怎么办？（哪个函数导致的）" class="headerlink" title="CPU使用率过高怎么办？（哪个函数导致的）"></a>CPU使用率过高怎么办？（哪个函数导致的）</h2><ul>
+<li><p>GDB（The GNU Project Debugger）：GDB 并不适合在性能分析的早期应用，因为 GDB 调试程序的过程会中断程序运行。当你找到了出问题的大致函数后，线下再借助它来进一步调试函数内部的问题。</p>
+</li>
+<li><p>perf：它以性能事件采样为基础，不仅可以分析系统的各种事件和内核性能，还可以用来分析指定应用程序的性能问题。</p>
+<ol>
+<li>perf top<ul>
+<li>它能够实时显示占用 CPU 时钟最多的函数或者指令，因此可以用来查找热点函数</li>
+<li>第一行包含三个数据，分别是采样数（Samples）、事件类型（event）和事件总数量（Event count）</li>
+<li>第一列 Overhead ，是该符号的性能事件在所有采样中的比例，用百分比来表示。</li>
+<li>第二列 Shared ，是该函数或指令所在的动态共享对象（Dynamic Shared Object），如内核、进程名、动态链接库名、内核模块名等。</li>
+<li>第三列 Object ，是动态共享对象的类型。比如 [.] 表示用户空间的可执行程序、或者动态链接库，而 [k] 则表示内核空间。</li>
+<li>最后一列 Symbol 是符号名，也就是函数名。当函数名未知时，用十六进制的地址来表示。</li>
+</ul>
+</li>
+<li>perf record 和 perf report<ul>
+<li>提供了保存数据的功能，保存后的数据</li>
+<li>我们还经常为 perf top 和 perf record 加上 -g 参数，开启调用关系的采样，方便我们根据调用链来分析性能问题。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="找到CPU利用率100-的函数"><a href="#找到CPU利用率100-的函数" class="headerlink" title="找到CPU利用率100%的函数"></a>找到CPU利用率100%的函数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">构建docker镜像</span></span><br><span class="line">make build</span><br><span class="line"><span class="meta">#</span><span class="bash">运行镜像</span></span><br><span class="line">make run</span><br><span class="line"><span class="meta">#</span><span class="bash">停止镜像</span></span><br><span class="line">make clean</span><br><span class="line"><span class="meta">#</span><span class="bash">并发10个请求测试Nginx性能，总共测试100个请求</span></span><br><span class="line">ab -c 10 -n 100 http://192.168.0.10:10000/</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 从容器phpfpm中将PHP源码拷贝出来</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> docker cp phpfpm:/app .</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用grep查找函数调用</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> grep sqrt -r app/ <span class="comment">#找到了sqrt调用</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Centos7-perf无法查看调用链函数名称"><a href="#Centos7-perf无法查看调用链函数名称" class="headerlink" title="Centos7 perf无法查看调用链函数名称"></a>Centos7 perf无法查看调用链函数名称</h3><blockquote>
+<p>解决centos7，上次实战用 perf top -g -p pid没有看到函数名称</p>
+<p>我的系统是centos7，上次实战用 perf top -g -p pid没有看到函数名称，只能看到一堆十六进制的东西，然后老师给了解决方法，我转述下：<br>分析：当没有看到函数名称，只看到了十六进制符号，下面有Failed to open /usr/lib/x86_64-linux-gnu/libxml2.so.2.9.4, continuing without symbols 这说明perf无法找到待分析进程所依赖的库。这里只显示了一个，但其实依赖的库还有很多。这个问题其实是在分析Docker容器应用时经常会碰到的一个问题，因为容器应用所依赖的库都在镜像里面。</p>
+<p>老师给了两个解决思路：<br>（1）在容器外面构建相同路径的依赖库。这种方法不推荐，一是因为找出这些依赖比较麻烦，更重要的是构建这些路径会污染虚拟机的环境。<br>（2）在容器外面把分析纪录保存下来，到容器里面再去查看结果，这样库和符号的路径就都是对的了。</p>
+<p>操作：<br>（1）在Centos系统上运行 perf record -g -p <pid>，执行一会儿（比如15秒）按ctrl+c停止<br>（2）把生成的 perf.data（这个文件生成在执行命令的当前目录下，当然也可以通过查找它的路径 find | grep perf.data或 find / -name perf.data）文件拷贝到容器里面分析:<br>docker cp perf.data phpfpm:/tmp<br>docker exec -i -t phpfpm bash<br>$ cd /tmp/<br>$ apt-get update &amp;&amp; apt-get install -y linux-perf linux-tools procps<br>$ perf_4.9 report</pid></p>
+<p>注意：最后运行的工具名字是容器内部安装的版本 perf_4.9，而不是 perf 命令，这是因为 perf 会去跟内核的版本进行匹配，但镜像里面安装的perf版本有可能跟虚拟机的内核版本不一致。<br>注意：上面的问题只是在centos系统中有问题，ubuntu上没有这个问题</p>
+</blockquote>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>CPU 使用率是最直观和最常用的系统性能指标，更是我们在排查性能问题时，通常会关注的第一个指标。所以我们更要熟悉它的含义，尤其要弄清楚用户（%user）、Nice（%nice）、系统（%system） 、等待 I/O（%iowait） 、中断（%irq）以及软中断（%softirq）这几种不同 CPU 的使用率。比如说：</p>
+<ol>
+<li>用户 CPU 和 Nice CPU 高，说明用户态进程占用了较多的 CPU，所以应该着重排查进程的性能问题。</li>
+<li>系统 CPU 高，说明内核态占用了较多的 CPU，所以应该着重排查内核线程或者系统调用的性能问题。</li>
+<li>I/O 等待 CPU 高，说明等待 I/O 的时间比较长，所以应该着重排查系统存储是不是出现了 I/O 问题。</li>
+<li>软中断和硬中断高，说明软中断或硬中断的处理程序占用了较多的 CPU，所以应该着重排查内核中的中断服务程序。</li>
+</ol>
+<h1 id="案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用"><a href="#案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用" class="headerlink" title="案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用"></a>案例篇：系统的CPU使用率很高，但为啥却找不到高CPU的应用</h1><h2 id="Linux命令解释-3"><a href="#Linux命令解释-3" class="headerlink" title="Linux命令解释"></a>Linux命令解释</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">docker镜像制作</span></span><br><span class="line">make build</span><br><span class="line">make run</span><br><span class="line"><span class="meta">#</span><span class="bash">复制docker容器的源码到磁盘</span></span><br><span class="line">docker cp phpfpm:/app .</span><br><span class="line"><span class="meta">#</span><span class="bash">进入容器内存命令</span></span><br><span class="line">docker exec -it dacbe8c8fa0f /bin/sh</span><br><span class="line"><span class="meta">#</span><span class="bash">ab性能工具：并发100个请求测试Nginx性能，总共测试1000个请求</span></span><br><span class="line">ab -c 100 -n 1000 http://10.200.102.104:10000/</span><br><span class="line"><span class="meta">#</span><span class="bash">ab性能工具：测试的并发请求数改成5，同时把请求时长设置为10分钟（-t 600）</span></span><br><span class="line">ab -c 5 -t 600 http://10.200.102.104:10000/</span><br></pre></td></tr></table></figure>
+
+<h2 id="高CPU无法找到进程实验"><a href="#高CPU无法找到进程实验" class="headerlink" title="高CPU无法找到进程实验"></a>高CPU无法找到进程实验</h2><h1 id="套路篇：如何迅速分析出系统CPU的瓶颈在哪里？"><a href="#套路篇：如何迅速分析出系统CPU的瓶颈在哪里？" class="headerlink" title="套路篇：如何迅速分析出系统CPU的瓶颈在哪里？"></a>套路篇：如何迅速分析出系统CPU的瓶颈在哪里？</h1><h2 id="CPU性能指标"><a href="#CPU性能指标" class="headerlink" title="CPU性能指标"></a>CPU性能指标</h2><p><img alt="image-20200411202009176" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq3febzcgj30sh0rcq6p.jpg" class="lazyload"></p>
+<ul>
+<li>CPU利用率<ul>
+<li>CPU 使用率描述了非空闲时间占总 CPU 时间的百分比，根据 CPU 上运行任务的不同，又被分为用户CPU、系统CPU、等待I/O CPU、软中断和硬中断等。</li>
+</ul>
+</li>
+<li>平均负载<ul>
+<li>也就是系统的平均活跃进程数。它反应了系统的整体负载情况，主要包括三个数值，分别指过去1分钟、过去5分钟和过去15分钟的平均负载。</li>
+<li>理想情况下，平均负载等于逻辑 CPU 个数，这表示每个 CPU 都恰好被充分利用。如果平均负载大于逻辑CPU个数，就表示负载比较重了。</li>
+</ul>
+</li>
+<li>进程上下文切换<ul>
+<li>无法获取资源而导致的自愿上下文切换；</li>
+<li>被系统强制调度导致的非自愿上下文切换。</li>
+</ul>
+</li>
+<li>CPU缓存命中率</li>
+</ul>
+<h2 id="性能工具"><a href="#性能工具" class="headerlink" title="性能工具"></a>性能工具</h2><ul>
+<li>指标-&gt;工具</li>
+</ul>
+<p><img alt="image-20200411202844796" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq3oa3o61j30kc0rr49j.jpg" class="lazyload"></p>
+<ul>
+<li>工具-&gt;指标</li>
+</ul>
+<p><img alt="image-20200411203210248" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq3rupi80j30r40ru4an.jpg" class="lazyload"></p>
+<h2 id="如何迅速分析CPU的性能瓶颈"><a href="#如何迅速分析CPU的性能瓶颈" class="headerlink" title="如何迅速分析CPU的性能瓶颈"></a>如何迅速分析CPU的性能瓶颈</h2><p><img alt="image-20200411203849385" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq3yrgd6yj30l00p7gp3.jpg" class="lazyload"></p>
+<p>这张图里，我列出了 top、vmstat 和 pidstat 分别提供的重要的 CPU 指标，并用虚线表示关联关系，对应出了性能分析下一步的方向。</p>
+<p>通过这张图你可以发现，这三个命令，几乎包含了所有重要的 CPU 性能指标，比如：</p>
+<ul>
+<li>从 top 的输出可以得到各种 CPU 使用率以及僵尸进程和平均负载等信息。</li>
+<li>从 vmstat 的输出可以得到上下文切换次数、中断次数、运行状态和不可中断状态的进程数。</li>
+<li>从 pidstat 的输出可以得到进程的用户 CPU 使用率、系统 CPU 使用率、以及自愿上下文切换和非自愿上下文切换情况。</li>
+</ul>
+<h1 id="套路篇：如何“快准狠”找到系统内存的问题"><a href="#套路篇：如何“快准狠”找到系统内存的问题" class="headerlink" title="套路篇：如何“快准狠”找到系统内存的问题"></a>套路篇：如何“快准狠”找到系统内存的问题</h1><h2 id="内存性能指标"><a href="#内存性能指标" class="headerlink" title="内存性能指标"></a>内存性能指标</h2><p><img alt="image-20200411204757575" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq489m5eyj30oz0rdn14.jpg" class="lazyload"></p>
+<p>首先，你最容易想到的是系统内存使用情况，比如已用内存、剩余内存、共享内存、可用内存、缓存和缓冲区的用量等。</p>
+<ul>
+<li>已用内存和剩余内存很容易理解，就是已经使用和还未使用的内存。</li>
+<li>共享内存是通过tmpfs实现的，所以它的大小也就是tmpfs使用的内存大小。tmpfs其实也是一种特殊的缓存。</li>
+<li>可用内存是新进程可以使用的最大内存，它包括剩余内存和可回收缓存。</li>
+<li>缓存包括两部分，一部分是磁盘读取文件的页缓存，用来缓存从磁盘读取的数据，可以加快以后再次访问的速度。另一部分，则是Slab分配器中的可回收内存。</li>
+<li>缓冲区是对原始磁盘块的临时存储，用来缓存将要写入磁盘的数据。这样，内核就可以把分散的写集中起来，统一优化磁盘写入。</li>
+</ul>
+<p>第二类很容易想到的，应该是进程内存使用情况，比如进程的虚拟内存、常驻内存、共享内存以及Swap内存等。</p>
+<ul>
+<li>虚拟内存，包括了进程代码段、数据段、共享内存、已经申请的堆内存和已经换出的内存等。这里要注意，已经申请的内存，即使还没有分配物理内存，也算作虚拟内存。</li>
+<li>常驻内存是进程实际使用的物理内存，不过，它不包括Swap和共享内存。</li>
+<li>共享内存，既包括与其他进程共同使用的真实的共享内存，还包括了加载的动态链接库以及程序的代码段等。</li>
+<li>Swap内存，是指通过Swap换出到磁盘的内存。</li>
+</ul>
+<p>当然，这些指标中，常驻内存一般会换算成占系统总内存的百分比，也就是进程的内存使用率。</p>
+<p>除了这些很容易想到的指标外，我还想再强调一下，缺页异常。</p>
+<p>在内存分配的原理中，我曾经讲到过，系统调用内存分配请求后，并不会立刻为其分配物理内存，而是在请求首次访问时，通过缺页异常来分配。缺页异常又分为下面两种场景。</p>
+<ul>
+<li>可以直接从物理内存中分配时，被称为次缺页异常。</li>
+<li>需要磁盘I/O介入（比如Swap）时，被称为主缺页异常。</li>
+</ul>
+<h2 id="性能工具-1"><a href="#性能工具-1" class="headerlink" title="性能工具"></a>性能工具</h2><ul>
+<li>指标-&gt;工具</li>
+</ul>
+<p><img alt="image-20200411205205984" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq4cl8upnj30mv0ro7ac.jpg" class="lazyload"></p>
+<ul>
+<li>工具-&gt;指标</li>
+</ul>
+<p><img alt="image-20200411205403785" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq4en9fpzj30qu0rqgv3.jpg" class="lazyload"></p>
+<h2 id="如何迅速分析内存的性能瓶颈"><a href="#如何迅速分析内存的性能瓶颈" class="headerlink" title="如何迅速分析内存的性能瓶颈"></a>如何迅速分析内存的性能瓶颈</h2><p><img alt="image-20200411205610114" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq4gty2bbj31g10rudo9.jpg" class="lazyload"></p>
+<p><strong>为了迅速定位内存问题，我通常会先运行几个覆盖面比较大的性能工具，比如free、top、vmstat、pidstat等</strong>。</p>
+<p>具体的分析思路主要有这几步。</p>
+<ol>
+<li>先用free和top，查看系统整体的内存使用情况。</li>
+<li>再用vmstat和pidstat，查看一段时间的趋势，从而判断出内存问题的类型。</li>
+<li>最后进行详细分析，比如内存分配分析、缓存/缓冲区分析、具体进程的内存使用分析等。</li>
+</ol>
+<h1 id="套路篇：如何迅速分析出系统IO的瓶颈在哪里？"><a href="#套路篇：如何迅速分析出系统IO的瓶颈在哪里？" class="headerlink" title="套路篇：如何迅速分析出系统IO的瓶颈在哪里？"></a>套路篇：如何迅速分析出系统IO的瓶颈在哪里？</h1><h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><p><img alt="image-20200411211058741" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq4w8vq7hj30ll0nlq9j.jpg" class="lazyload"></p>
+<h2 id="文件系统I-O性能指标"><a href="#文件系统I-O性能指标" class="headerlink" title="文件系统I/O性能指标"></a>文件系统I/O性能指标</h2><ul>
+<li>首先，最容易想到的是存储空间的使用情况，包括容量，使用量以及剩余空间等。</li>
+<li>其次，你应该想到的是前面多次提到过的缓存使用情况，包括页缓存、目录项缓存、索引节点缓存以及各个具体文件系统(如ext4、XFS 等)的缓存。</li>
+</ul>
+<h2 id="磁盘I-O性能指标"><a href="#磁盘I-O性能指标" class="headerlink" title="磁盘I/O性能指标"></a>磁盘I/O性能指标</h2><p>在磁盘I/O原理的文章中，我曾提到过四个核心的磁盘1/O指标。</p>
+<ul>
+<li>使用率，是指磁盘忙处理I/O请求的百分比。过高的使用率(比如超过60%)通常意味着磁盘I/O存在性能瓶颈。</li>
+<li>IOPS (Input/Output Per Second) ,是指每秒的I/O请求数。</li>
+<li>吞吐量，是指每秒的I/O请求大小。</li>
+<li>响应时间，是指从发出I/O请求到收到响应的间隔时间。</li>
+</ul>
+<p><img alt="image-20200411211947480" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq55el98tj31eg0fltf3.jpg" class="lazyload"></p>
+<h2 id="性能工具-2"><a href="#性能工具-2" class="headerlink" title="性能工具"></a>性能工具</h2><ul>
+<li>指标-&gt;工具</li>
+</ul>
+<p><img alt="image-20200411212923203" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq5fht2uij30nu0qnqdj.jpg" class="lazyload"></p>
+<ul>
+<li>工具-&gt;指标</li>
+</ul>
+<p><img alt="image-20200411212838250" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq5elkmi1j30ir0qkqcc.jpg" class="lazyload"></p>
+<h2 id="如何迅速分析I-O的性能瓶颈"><a href="#如何迅速分析I-O的性能瓶颈" class="headerlink" title="如何迅速分析I/O的性能瓶颈"></a>如何迅速分析I/O的性能瓶颈</h2><p><img alt="image-20200411213428422" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gdq5koit15j31f30pt7d1.jpg" class="lazyload"></p>
+<h1 id="TODO-套路篇：磁盘-IO-性能优化的几个思路"><a href="#TODO-套路篇：磁盘-IO-性能优化的几个思路" class="headerlink" title="TODO:套路篇：磁盘 IO 性能优化的几个思路"></a>TODO:套路篇：磁盘 IO 性能优化的几个思路</h1><h1 id="套路篇：网络性能优化的几个思路（上）"><a href="#套路篇：网络性能优化的几个思路（上）" class="headerlink" title="套路篇：网络性能优化的几个思路（上）"></a>套路篇：网络性能优化的几个思路（上）</h1></div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" target="_blank" rel="noopener">Noah Pan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2020/03/21/2020-03-21-Linux%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/">http://yoursite.com/2020/03/21/2020-03-21-Linux%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com">Noah</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux    </a></div><div class="post_share"><div class="social-share" data-image="https://tva1.sinaimg.cn/large/007S8ZIlgy1gi0eiybvppj318n0p3wfi.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="https://tva1.sinaimg.cn/large/006y8mN6ly1g97t5fdhdrj30u014qdkm.jpg"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="https://tva1.sinaimg.cn/large/006y8mN6ly1g97t6e0istj30p011iq6s.jpg"><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2020/04/12/2020-04-12-Noah%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B8%8E%E8%B8%A9%E5%9D%91/"><img class="prev_cover lazyload" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghzwrhsmsvj312o0ljab7.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>Noah最佳实践与踩坑</span></div></a></div><div class="next-post pull_right"><a href="/2020/02/23/2020-02-23-%E5%89%91%E6%8C%87Offer%EF%BC%88%E5%AE%8C%E6%95%B4%E7%89%88%EF%BC%89/"><img class="next_cover lazyload" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghzx22jv93j318k0p03zl.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>剑指Offer（完整版）</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2018/08/20/new/2018-08-20-Linux脚本/" title="Linux脚本"><img class="relatedPosts_cover lazyload"data-src="https://tva1.sinaimg.cn/large/006y8mN6ly1g97s35b2ggj31hc0u0jz1.jpg"><div class="relatedPosts_title">Linux脚本</div></a></div></div><div class="clear_both"></div></div></div></div><footer id="footer" style="background-image: url(https://tva1.sinaimg.cn/large/006y8mN6gy1g96i6cigbdj31400p0e27.jpg)"><div id="footer-wrap"><div class="copyright">&copy;2017 - 2020 By Noah Pan</div><div class="footer_custom_text">Hi,to contact me <a href="#">Noah</a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script id="ribbon_piao" mobile="false" src="/js/third-party/piao.js"></script><script id="canvas_nest" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="/js/third-party/canvas-nest.js"></script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+</script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script></body></html>
